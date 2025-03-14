@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-public class ExcelController {
+public class ExcelReadController {
 
     @PostMapping("/upload")
     public String uploadExcel(@RequestParam("file") MultipartFile file) {
@@ -16,7 +16,11 @@ public class ExcelController {
             Sheet sheet = workbook.getSheetAt(0);
             for (Row row : sheet) {
                 for (Cell cell : row) {
-                    System.out.print(cell.toString() + "\t");
+                    System.out.print(
+                                    "Row: " + row.getRowNum() + "\t" + // Номер строки
+                                    "Col: " + cell.getColumnIndex() + "\t" + // Номер столбца
+                                    "Value: " + cell.toString() + "\t" // Значение ячейки
+                    );
                 }
                 System.out.println();
             }

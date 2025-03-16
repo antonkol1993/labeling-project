@@ -1,10 +1,10 @@
 package com.anton.labeling.service.largeBox;
 
 
+import com.anton.labeling.objects.ItemLargeBox;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.util.CellRangeAddress;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -14,7 +14,7 @@ public class CardCreator {
 
 
     // Метод для создания и сохранения карточки
-    public void createCard(XSSFWorkbook workbook, XSSFSheet sheet) throws IOException {
+    public void createCard(XSSFWorkbook workbook, XSSFSheet sheet, ItemLargeBox item) throws IOException {
         CelFiller celFiller = new CelFiller(workbook, sheet);
 
         // Устанавливаем ширину столбцов
@@ -50,7 +50,7 @@ public class CardCreator {
         }
 
         // Заполнение ячеек в соответствии с заданными стилями
-        celFiller.fillCells(workbook, sheet); // Добавляем вызов метода для заполнения
+        celFiller.fillCells(workbook, sheet, item); // Добавляем вызов метода для заполнения
 
         // Работа с изображениями
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",

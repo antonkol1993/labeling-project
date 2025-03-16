@@ -12,8 +12,10 @@ import java.io.IOException;
 
 public class CardCreator {
 
+
     // Метод для создания и сохранения карточки
     public void createCard(XSSFWorkbook workbook, XSSFSheet sheet) throws IOException {
+        CelFiller celFiller = new CelFiller(workbook, sheet);
         // Устанавливаем ширину столбцов
         sheet.setColumnWidth(1, (int) (((124 - 5) / 7.0 + 0.71) * 256));
         sheet.setColumnWidth(2, (int) (((88 - 5) / 7.0 + 0.71) * 256));
@@ -96,134 +98,35 @@ public class CardCreator {
         }
     }
 
-    private static void fillCells(XSSFWorkbook workbook, XSSFSheet sheet) {
-        // 🔹 Жирный шрифт для строки 3 (B3)
-        Font boldFontMain3Row = workbook.createFont();
-        boldFontMain3Row.setBold(true);
-        boldFontMain3Row.setFontHeightInPoints((short) 11);
+    private void fillCells(XSSFWorkbook workbook, XSSFSheet sheet) {
+        CelFiller cellFiller = new CelFiller(workbook, sheet);
 
-        // 🔹 Заполнение B3 (жирный центр)
-        Row row3 = sheet.getRow(3);
-        if (row3 == null) row3 = sheet.createRow(3);
-        Cell cell3 = row3.getCell(1);
-        if (cell3 == null) cell3 = row3.createCell(1);
-        cell3.setCellValue("Жирный Центр Item");
+        // 🔹 Жирный шрифт для заголовков
+        Font arialFontMain = cellFiller.createArialFont((short) 11);
 
-        CellStyle boldCenterStyle = CardStyle.createBorderedCellStyle(workbook, sheet, 3, 1);
-        boldCenterStyle.setAlignment(HorizontalAlignment.CENTER);
-        boldCenterStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        boldCenterStyle.setFont(boldFontMain3Row);
-        cell3.setCellStyle(boldCenterStyle);
+        // Заполнение B3 (жирный центр)
+        cellFiller.setCellValueWithStyle(3, 1, "Жирный Центр Item", arialFontMain, HorizontalAlignment.CENTER);
 
-        // 🔹 Жирный шрифт для левого выравнивания (B4-B10, кроме B9)
-        Font boldFontDownRows = workbook.createFont();
-        boldFontDownRows.setBold(true);
-        boldFontDownRows.setFontHeightInPoints((short) 10);
-
+        // 🔹 Жирный шрифт для B4-B10 (кроме B9) с левым выравниванием
+        Font arialFontDownRows = cellFiller.createArialFont((short) 10);
         for (int rowNum = 4; rowNum <= 10; rowNum++) {
-            if (rowNum == 9) continue;
-
-            Row row = sheet.getRow(rowNum);
-            if (row == null) row = sheet.createRow(rowNum);
-
-            Cell cellB = row.getCell(1);
-            if (cellB == null) cellB = row.createCell(1);
-            cellB.setCellValue("Жирный лево Item");
-
-            CellStyle boldLeftStyle = CardStyle.createBorderedCellStyle(workbook, sheet, rowNum, 1);
-            boldLeftStyle.setAlignment(HorizontalAlignment.LEFT);
-            boldLeftStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-            boldLeftStyle.setFont(boldFontDownRows);
-            cellB.setCellStyle(boldLeftStyle);
+            if (rowNum == 9) continue; // Пропускаем строку 9
+            cellFiller.setCellValueWithStyle(rowNum, 1, "Жирный лево Item", arialFontDownRows, HorizontalAlignment.LEFT);
         }
 
-        // 🔹 Жирный шрифт для объединенных ячеек C5:D5 и C7
-        Font boldFontCenter = workbook.createFont();
-        boldFontCenter.setBold(true);
-        boldFontCenter.setFontHeightInPoints((short) 10);
+        // 🔹 Жирный шрифт для C5:D5, C7 (центр)
+        Font arialFontCenter = cellFiller.createArialFont((short) 10);
+        cellFiller.setCellValueWithMergedStyle(5, 2, "Жирный Центр Item", arialFontCenter, HorizontalAlignment.CENTER, 5, 3);
+        cellFiller.setCellValueWithStyle(7, 2, "Жирный Центр Item", arialFontCenter, HorizontalAlignment.CENTER);
 
-        CellStyle boldCenterMergedStyle = CardStyle.createBorderedCellStyle(workbook, sheet, 5, 2);
-        boldCenterMergedStyle.setAlignment(HorizontalAlignment.CENTER);
-        boldCenterMergedStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        boldCenterMergedStyle.setFont(boldFontCenter);
-
-        // 🔹 Заполнение C5:D5 (ячейки объединены)
-        Row row5 = sheet.getRow(5);
-        if (row5 == null) row5 = sheet.createRow(5);
-        Cell cell5C = row5.getCell(2);
-        if (cell5C == null) cell5C = row5.createCell(2);
-        cell5C.setCellValue("Жирный Центр Item");
-        cell5C.setCellStyle(boldCenterMergedStyle);
-
-        // ✅ Проверяем, не объединены ли C5:D5 перед объединением
-        if (!isMergedRegion(sheet, 5, 2, 5, 3)) {
-            sheet.addMergedRegion(new CellRangeAddress(5, 5, 2, 3));
-        }
-
-        // 🔹 Заполнение C7 (центр)
-        Row row7 = sheet.getRow(7);
-        if (row7 == null) row7 = sheet.createRow(7);
-        Cell cell7C = row7.getCell(2);
-        if (cell7C == null) cell7C = row7.createCell(2);
-        cell7C.setCellValue("1 000");
-        cell7C.setCellStyle(boldCenterMergedStyle);
-
-        // 🔹 Жирный шрифт для текста "final left"
-        Font boldFontFinalLeft = workbook.createFont();
-        boldFontFinalLeft.setBold(true);
-        boldFontFinalLeft.setFontHeightInPoints((short) 10);
-
-        CellStyle boldLeftFinalStyle = workbook.createCellStyle();
-        boldLeftFinalStyle.setAlignment(HorizontalAlignment.LEFT);
-        boldLeftFinalStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        boldLeftFinalStyle.setFont(boldFontFinalLeft);
-
-        // 🔹 Заполнение D6-D8 (текст слева, жирный)
+        // 🔹 Заполнение D6-D8, C9-C10 (текст слева, жирный)
+        Font arialFontFinalLeft = cellFiller.createArialFont((short) 10);
         for (int rowNum = 6; rowNum <= 8; rowNum++) {
-            Row row = sheet.getRow(rowNum);
-            if (row == null) row = sheet.createRow(rowNum);
-
-            Cell cellD = row.getCell(3);
-            if (cellD == null) cellD = row.createCell(3);
-            cellD.setCellValue("final left");
-
-            CellStyle borderedLeftStyle = CardStyle.createBorderedCellStyle(workbook, sheet, rowNum, 3);
-            borderedLeftStyle.setAlignment(HorizontalAlignment.LEFT);
-            borderedLeftStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-            borderedLeftStyle.setFont(boldFontFinalLeft);
-            cellD.setCellStyle(borderedLeftStyle);
+            cellFiller.setCellValueWithStyle(rowNum, 3, "final left", arialFontFinalLeft, HorizontalAlignment.LEFT);
         }
-
-        // 🔹 Заполнение C9-C10 (текст слева, жирный)
         for (int rowNum = 9; rowNum <= 10; rowNum++) {
-            Row row = sheet.getRow(rowNum);
-            if (row == null) row = sheet.createRow(rowNum);
-
-            Cell cellC = row.getCell(2);
-            if (cellC == null) cellC = row.createCell(2);
-            cellC.setCellValue("final left");
-
-            CellStyle borderedLeftStyle = CardStyle.createBorderedCellStyle(workbook, sheet, rowNum, 2);
-            borderedLeftStyle.setAlignment(HorizontalAlignment.LEFT);
-            borderedLeftStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-            borderedLeftStyle.setFont(boldFontFinalLeft);
-            cellC.setCellStyle(borderedLeftStyle);
+            cellFiller.setCellValueWithStyle(rowNum, 2, "final left", arialFontFinalLeft, HorizontalAlignment.LEFT);
         }
-
-    }
-
-    /**
-     * Проверяет, существует ли уже объединенный регион в заданном диапазоне.
-     */
-    private static boolean isMergedRegion(XSSFSheet sheet, int firstRow, int firstCol, int lastRow, int lastCol) {
-        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
-            CellRangeAddress range = sheet.getMergedRegion(i);
-            if (range.getFirstRow() == firstRow && range.getFirstColumn() == firstCol &&
-                    range.getLastRow() == lastRow && range.getLastColumn() == lastCol) {
-                return true;
-            }
-        }
-        return false;
     }
 
 

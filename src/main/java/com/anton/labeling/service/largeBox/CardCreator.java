@@ -62,11 +62,6 @@ public class CardCreator {
         sheet.setColumnWidth(startCol + 1, (int) (((88 - 5) / 7.0 + 0.71) * 256)); // 2-й столбец (88 px)
         sheet.setColumnWidth(startCol + 2, (int) (((88 - 5) / 7.0 + 0.71) * 256)); // 3-й столбец (88 px)
     }
-//    private void setColumnWidths(XSSFSheet sheet, int startCol) {
-//        sheet.setColumnWidth(startCol, 6000); // Пример фиксированного значения
-//        sheet.setColumnWidth(startCol + 1, 6000);
-//        sheet.setColumnWidth(startCol + 2, 6000);
-//    }
 }
 
 

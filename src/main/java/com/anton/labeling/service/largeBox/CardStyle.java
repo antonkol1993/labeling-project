@@ -11,17 +11,27 @@ public class CardStyle {
     // Метод для создания стиля ячейки
     public static CellStyle createBorderedCellStyle(XSSFWorkbook workbook, XSSFSheet sheet, int row, int col) {
         CellStyle cellStyle = workbook.createCellStyle();
-        if (row <= 3) { // для строк 1-3
+
+        if (row <= 3) { // Для строк 1-3
             cellStyle.setBorderTop(BorderStyle.MEDIUM);
             cellStyle.setBorderBottom(BorderStyle.MEDIUM);
             cellStyle.setBorderLeft(BorderStyle.MEDIUM);
             cellStyle.setBorderRight(BorderStyle.MEDIUM);
         } else {
-            if (col == 1) cellStyle.setBorderLeft(BorderStyle.MEDIUM);
+            if (col == 1) {
+                cellStyle.setBorderLeft(BorderStyle.MEDIUM);
+                if (row >= 4 && row <= 10) cellStyle.setBorderRight(BorderStyle.THIN); // 4B-10B
+            }
+            if (col == 2) {
+                if ((row >= 6 && row <= 8) || row == 10) {
+                    cellStyle.setBorderRight(BorderStyle.THIN); // 6C-8C, 10C
+                }
+            }
             if (col == 3) cellStyle.setBorderRight(BorderStyle.MEDIUM);
             if (row < 10) cellStyle.setBorderBottom(BorderStyle.THIN);
             if (row == 10) cellStyle.setBorderBottom(BorderStyle.MEDIUM);
         }
+
         return cellStyle;
     }
 

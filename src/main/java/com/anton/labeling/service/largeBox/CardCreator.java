@@ -26,8 +26,7 @@ public class CardCreator {
         sheet.getRow(startRow + 1).setHeightInPoints(69.0f);
         sheet.getRow(startRow + 2).setHeightInPoints(35.25f);
 
-        // 4. Добавляем объединенные области
-        CardStyle.addMergedRegions(sheet, startRow, startCol);
+
 
 
 
@@ -44,7 +43,10 @@ public class CardCreator {
             }
         }
 //        celFiller.fillCells(item,startRow,startCol);
-        cellFiller.fillCellsWithThree(startRow, startCol, startRow + 9, startCol + 2);
+        cellFiller.fillCellsWithData(item, startRow, startCol);
+
+        // 4. Добавляем объединенные области
+        CardStyle.addMergedRegions(sheet, startRow, startCol);
         // 7. Добавляем изображения
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
                 startRow, startCol, startRow + 1, startCol + 2, 420000, 150000);

@@ -64,11 +64,10 @@ public class CardStyle {
                 {startRow, startRow, startCol, startCol + 2}, // 1 строка
                 {startRow + 1, startRow + 1, startCol, startCol + 2}, // 2 строка
                 {startRow + 2, startRow + 2, startCol, startCol + 2}, // 3 строка
-                {startRow + 3, startRow + 3, startCol + 1, startCol + 2}, // 4 строка (правая часть)
-                {startRow + 4, startRow + 4, startCol + 1, startCol + 2}, // 5 строка (C5:D5 - объединить!)
-
+                {startRow + 3, startRow + 3, startCol + 1, startCol + 2}, // 4 строка
+                {startRow + 4, startRow + 4, startCol + 1, startCol + 2}, // 5 строка (C5:D5)
                 {startRow + 8, startRow + 8, startCol + 1, startCol + 2},  // 9 строка
-                {startRow + 9, startRow + 9, startCol + 1, startCol + 2}  // 10 строка
+                {startRow + 9, startRow + 9, startCol + 1, startCol + 2}   // 10 строка
         };
 
         // Удаляем объединение 6 строки (C6:D6)
@@ -77,13 +76,19 @@ public class CardStyle {
                         region.getLastRow() == startRow + 5 && region.getLastColumn() == startCol + 2
         );
 
-        // Добавляем правильные объединенные области
+        // Добавляем объединенные области **только если их еще нет**
         for (int[] region : mergedRegions) {
             CellRangeAddress newRegion = new CellRangeAddress(region[0], region[1], region[2], region[3]);
-            boolean regionExists = sheet.getMergedRegions().stream().anyMatch(existing -> existing.equals(newRegion));
+
+            boolean regionExists = sheet.getMergedRegions().stream()
+                    .anyMatch(existing -> existing.getFirstRow() == newRegion.getFirstRow() &&
+                            existing.getFirstColumn() == newRegion.getFirstColumn() &&
+                            existing.getLastRow() == newRegion.getLastRow() &&
+                            existing.getLastColumn() == newRegion.getLastColumn());
 
             if (!regionExists) {
                 sheet.addMergedRegion(newRegion);
+
             }
         }
     }

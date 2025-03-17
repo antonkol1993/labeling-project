@@ -22,13 +22,18 @@ public class ConsoleApp {
         XSSFSheet sheet = workbook.createSheet("Card");
 
         CardCreator cardCreator = new CardCreator();
-//        for (int i = 1; i < 90; i += 4) {
-            try {
-                cardCreator.createCard(workbook, sheet, item, 1, 1);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//        for (int i = 1; i < 15; i += 4) {
+//            try {
+//                cardCreator.createCard(workbook, sheet, item, 1, i);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 //        }
+        try {
+            cardCreator.createCard(workbook, sheet, item, 1, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         // Сохранение файла и закрытие workbook
         try (FileOutputStream fileOut = new FileOutputStream("ExcelCard.xlsx")) {

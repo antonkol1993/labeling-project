@@ -18,12 +18,8 @@ public class CelFiller {
 
     public void fillCells(ItemLargeBox item, int startRow, int startCol) {
         Font arialFontMain = createArialFont((short) 11);
+        setCellValueWithStyle(startRow + 3, startCol, item.getName() + "\n" + item.getSize(), arialFontMain, HorizontalAlignment.CENTER);
 
-        // Заголовок карточки (B3 -> startRow + 3, startCol)
-        String nameAndSize = item.getName() + "\n" + item.getSize();
-        setCellValueWithStyle(startRow + 3, startCol, nameAndSize, arialFontMain, HorizontalAlignment.CENTER);
-
-        // Дополнительные строки карточки
         Font arialFontDownRows = createArialFont((short) 10);
         for (int rowNum = 4; rowNum <= 10; rowNum++) {
             if (rowNum == 9) continue;
@@ -37,9 +33,8 @@ public class CelFiller {
             }
         }
 
-        // C5:D5
         Font arialFontCenter = createArialFont((short) 10);
-        setCellValueWithMergedStyle(startRow + 5, startCol + 1, item.getSize(), arialFontCenter, HorizontalAlignment.CENTER, startRow + 5, startCol + 2);
+        setCellValueWithMergedStyle(startRow + 5, startCol + 1, startRow + 5, startCol + 2, item.getSize(), arialFontCenter, HorizontalAlignment.CENTER);
     }
 
     private Font createArialFont(short fontSize) {
@@ -67,18 +62,18 @@ public class CelFiller {
         cell.setCellStyle(style);
     }
 
-    private void setCellValueWithMergedStyle(int endRow, int startCol, String value, Font font, HorizontalAlignment alignment, int startRow, int endCol) {
+    private void setCellValueWithMergedStyle(int startRow, int startCol, int endRow, int endCol, String value, Font font, HorizontalAlignment alignment) {
         setCellValueWithStyle(endRow, startCol, value, font, alignment);
         if (!isMergedRegion(startRow, startCol, endRow, endCol)) {
-            sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, startCol, endCol));
+            sheet.addMergedRegion(new CellRangeAddress(startRow, startCol, endRow, endCol));
         }
     }
 
-    private boolean isMergedRegion(int firstRow, int firstCol, int lastRow, int lastCol) {
+    private boolean isMergedRegion(int startRow, int startCol, int endRow, int endCol) {
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
             CellRangeAddress range = sheet.getMergedRegion(i);
-            if (range.getFirstRow() == firstRow && range.getFirstColumn() == firstCol &&
-                    range.getLastRow() == lastRow && range.getLastColumn() == lastCol) {
+            if (range.getFirstRow() == startRow && range.getFirstColumn() == startCol &&
+                    range.getLastRow() == endRow && range.getLastColumn() == endCol) {
                 return true;
             }
         }

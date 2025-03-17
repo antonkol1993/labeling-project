@@ -7,65 +7,55 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class CardStyle {
 
-
-    // Метод для создания стиля ячейки
-    public static CellStyle createBorderedCellStyle(XSSFWorkbook workbook, XSSFSheet sheet, int row, int col) {
+    public static CellStyle createBorderedCellStyle(XSSFWorkbook workbook, int row, int col, int startRow, int startCol) {
         CellStyle cellStyle = workbook.createCellStyle();
+        int relativeRow = row - startRow;
+        int relativeCol = col - startCol + 1; // Приводим к диапазону 1-3
 
-        if (row <= 3) { // Для строк 1-3
+        // Границы для заголовка карточки
+        if (relativeRow <= 3) {
             cellStyle.setBorderTop(BorderStyle.MEDIUM);
             cellStyle.setBorderBottom(BorderStyle.MEDIUM);
             cellStyle.setBorderLeft(BorderStyle.MEDIUM);
             cellStyle.setBorderRight(BorderStyle.MEDIUM);
         } else {
-            if (col == 1) {
+            if (relativeCol == 1) {
                 cellStyle.setBorderLeft(BorderStyle.MEDIUM);
-                if (row >= 4 && row <= 10) cellStyle.setBorderRight(BorderStyle.THIN); // 4B-10B
+                if (relativeRow >= 4 && relativeRow <= 10) cellStyle.setBorderRight(BorderStyle.THIN);
             }
-            if (col == 2) {
-                if ((row >= 6 && row <= 8) || row == 10) {
-                    cellStyle.setBorderRight(BorderStyle.THIN); // 6C-8C, 10C
+            if (relativeCol == 2) {
+                if ((relativeRow >= 6 && relativeRow <= 8) || relativeRow == 10) {
+                    cellStyle.setBorderRight(BorderStyle.THIN);
                 }
             }
-            if (col == 3) cellStyle.setBorderRight(BorderStyle.MEDIUM);
-            if (row < 10) cellStyle.setBorderBottom(BorderStyle.THIN);
-            if (row == 10) cellStyle.setBorderBottom(BorderStyle.MEDIUM);
+            if (relativeCol == 3) cellStyle.setBorderRight(BorderStyle.MEDIUM);
+            if (relativeRow < 10) cellStyle.setBorderBottom(BorderStyle.THIN);
+            if (relativeRow == 10) cellStyle.setBorderBottom(BorderStyle.MEDIUM);
         }
 
         return cellStyle;
     }
 
-    // Метод для добавления объединенных ячеек с проверкой на дублирование
-    public static void addMergedRegions(XSSFSheet sheet) {
-        // Массив объединенных областей
+
+
+    // Добавление объединенных ячеек (адаптирован для динамических карточек)
+    public static void addMergedRegions(XSSFSheet sheet, int startRow, int startCol) {
         int[][] mergedRegions = {
-                {1, 1, 1, 3}, // B2:D2
-                {2, 2, 1, 3}, // B3:D3
-                {3, 3, 1, 3}, // B4:D4
-                {4, 4, 2, 3}, // C5:D5
-                {5, 5, 2, 3}, // C6:D6
-                {9, 9, 2, 3}  // C9:D9
+                {1, 1, startCol, startCol + 2}, // Заголовок B2:D2, F2:H2...
+                {2, 2, startCol, startCol + 2},
+                {3, 3, startCol, startCol + 2},
+                {4, 4, startCol + 1, startCol + 2},
+                {5, 5, startCol + 1, startCol + 2},
+                {9, 9, startCol + 1, startCol + 2}
         };
 
-        // Проходим по всем диапазонам и добавляем их, если они еще не существуют
         for (int[] region : mergedRegions) {
             CellRangeAddress newRegion = new CellRangeAddress(region[0], region[1], region[2], region[3]);
-            boolean regionExists = false;
+            boolean regionExists = sheet.getMergedRegions().stream().anyMatch(existing -> existing.equals(newRegion));
 
-            // Проверяем, есть ли уже такой объединенный регион
-            for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
-                CellRangeAddress existingRegion = sheet.getMergedRegion(i);
-                if (newRegion.equals(existingRegion)) {
-                    regionExists = true;
-                    break;
-                }
-            }
-
-            // Если региона нет, добавляем его
             if (!regionExists) {
                 sheet.addMergedRegion(newRegion);
             }
         }
     }
-
 }

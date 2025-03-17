@@ -6,6 +6,8 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.util.List;
+
 public class CellFiller {
     private final XSSFWorkbook workbook;
     private final XSSFSheet sheet;
@@ -16,8 +18,7 @@ public class CellFiller {
     }
 
     public void fillCellsWithData(ItemLargeBox item, int startRow, int startCol) {
-
-        // Стили
+        // Определяем стили
         CellStyle centerBold11 = CardStyle.createCenteredBoldStyle(workbook, (short) 11);
         CellStyle centerBold10 = CardStyle.createCenteredBoldStyle(workbook, (short) 10);
         CellStyle leftBold10 = CardStyle.createLeftBoldStyle(workbook, (short) 10);
@@ -39,43 +40,41 @@ public class CellFiller {
                 {10, 2, 3, item.getOrder(), leftBold10}     // 10(2-3)
         };
 
-        for (Object[] val : values) {
-            int rowIdx = startRow + (int) val[0] - 1;
-            int colStart = startCol + (int) val[1] - 1;
-            int colEnd = startCol + (int) val[2] - 1;
-            String text = val[3].toString();
+        for (Object[] entry : values) {
+            int rowIdx = startRow + (int) entry[0] - 1;  // Смещение строки
+            int colIdx = startCol + (int) entry[1] - 1;  // Смещение столбца
+            int colSpan = (int) entry[2]; // Кол-во объединяемых колонок
+            String value = (String) entry[3];
+            CellStyle style = (CellStyle) entry[4];
 
             Row row = sheet.getRow(rowIdx);
-            if (row == null) row = sheet.createRow(rowIdx);
-
-            for (int col = colStart; col <= colEnd; col++) {
-                Cell cell = row.getCell(col);
-                if (cell == null) cell = row.createCell(col);
-                cell.setCellValue(text);
-                cell.setCellStyle(CardStyle.createBorderedCellStyle(workbook, startRow, startCol, rowIdx, col));
+            if (row == null) {
+                row = sheet.createRow(rowIdx);
             }
 
-            // Проверяем, нужно ли объединение ячеек
-            CellRangeAddress newRegion = new CellRangeAddress(rowIdx, rowIdx, colStart, colEnd);
-            if (newRegion.getNumberOfCells() > 1) {
-                boolean alreadyMerged = false;
-                for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
-                    CellRangeAddress existingRegion = sheet.getMergedRegion(i);
-                    if (existingRegion.getFirstRow() == newRegion.getFirstRow() &&
-                            existingRegion.getLastRow() == newRegion.getLastRow() &&
-                            existingRegion.getFirstColumn() == newRegion.getFirstColumn() &&
-                            existingRegion.getLastColumn() == newRegion.getLastColumn()) {
-                        alreadyMerged = true;
-                        break;
-                    }
-                }
-                if (!alreadyMerged) {
+            Cell cell = row.createCell(colIdx);
+            cell.setCellValue(value);
+            cell.setCellStyle(style);
+
+            // Объединение ячеек, если colSpan > 1
+            if (colSpan > 1) {
+                CellRangeAddress newRegion = new CellRangeAddress(rowIdx, rowIdx, colIdx, colIdx + colSpan - 1);
+                if (!isOverlapping(sheet, newRegion)) {
                     sheet.addMergedRegion(newRegion);
                 }
             }
         }
     }
 
-
+    // Метод проверки, пересекается ли объединение с уже существующими
+    private boolean isOverlapping(XSSFSheet sheet, CellRangeAddress newRegion) {
+        List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+        for (CellRangeAddress existing : mergedRegions) {
+            if (existing.intersects(newRegion)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

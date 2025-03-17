@@ -80,7 +80,7 @@ public class CardStyle {
         return createBoldCellStyle(workbook, HorizontalAlignment.LEFT, fontSize);
     }
 
-    // Метод для добавления объединенных ячеек с проверкой на дублирование
+    // Метод для добавления объединенных ячеек БЕЗ проверки
     public static void addMergedRegions(XSSFSheet sheet, int startRow, int startCol) {
         int[][] mergedRegions = {
                 {startRow, startRow, startCol, startCol + 2}, // 1 строка
@@ -92,26 +92,16 @@ public class CardStyle {
                 {startRow + 9, startRow + 9, startCol + 1, startCol + 2}   // 10 строка
         };
 
-        // Удаляем объединение 6 строки (C6:D6)
-        sheet.getMergedRegions().removeIf(region ->
-                region.getFirstRow() == startRow + 5 && region.getFirstColumn() == startCol + 1 &&
-                        region.getLastRow() == startRow + 5 && region.getLastColumn() == startCol + 2
-        );
-
-        // Добавляем объединенные области **только если их еще нет**
+        // Добавляем объединенные области БЕЗ проверки
         for (int[] region : mergedRegions) {
-            CellRangeAddress newRegion = new CellRangeAddress(region[0], region[1], region[2], region[3]);
-
-            boolean regionExists = sheet.getMergedRegions().stream()
-                    .anyMatch(existing -> existing.getFirstRow() == newRegion.getFirstRow() &&
-                            existing.getFirstColumn() == newRegion.getFirstColumn() &&
-                            existing.getLastRow() == newRegion.getLastRow() &&
-                            existing.getLastColumn() == newRegion.getLastColumn());
-
-            if (!regionExists) {
-                sheet.addMergedRegion(newRegion);
-
-            }
+            sheet.addMergedRegion(new CellRangeAddress(region[0], region[1], region[2], region[3]));
         }
+    }
+
+    // Новый метод для установки ширины столбцов
+    public static void setColumnWidths(XSSFSheet sheet, int startCol) {
+        sheet.setColumnWidth(startCol, (int) (((124 - 5) / 7.0 + 0.71) * 256)); // 1-й столбец (124 px)
+        sheet.setColumnWidth(startCol + 1, (int) (((88 - 5) / 7.0 + 0.71) * 256)); // 2-й столбец (88 px)
+        sheet.setColumnWidth(startCol + 2, (int) (((88 - 5) / 7.0 + 0.71) * 256)); // 3-й столбец (88 px)
     }
 }

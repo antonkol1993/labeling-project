@@ -58,6 +58,28 @@ public class CardStyle {
         return cellStyle;
     }
 
+    public static CellStyle createBoldCellStyle(Workbook workbook, HorizontalAlignment alignment, short fontSize) {
+        Font font = workbook.createFont();
+        font.setBold(true);
+        font.setFontHeightInPoints(fontSize);
+
+        CellStyle style = workbook.createCellStyle();
+        style.setFont(font);
+        style.setAlignment(alignment);
+        style.setVerticalAlignment(VerticalAlignment.CENTER);
+        style.setWrapText(true);
+
+        return style;
+    }
+
+    public static CellStyle createCenteredBoldStyle(Workbook workbook, short fontSize) {
+        return createBoldCellStyle(workbook, HorizontalAlignment.CENTER, fontSize);
+    }
+
+    public static CellStyle createLeftBoldStyle(Workbook workbook, short fontSize) {
+        return createBoldCellStyle(workbook, HorizontalAlignment.LEFT, fontSize);
+    }
+
     // Метод для добавления объединенных ячеек с проверкой на дублирование
     public static void addMergedRegions(XSSFSheet sheet, int startRow, int startCol) {
         int[][] mergedRegions = {

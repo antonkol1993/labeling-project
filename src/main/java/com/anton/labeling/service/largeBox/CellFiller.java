@@ -16,21 +16,27 @@ public class CellFiller {
     }
 
     public void fillCellsWithData(ItemLargeBox item, int startRow, int startCol) {
+
+        // Стили
+        CellStyle centerBold11 = CardStyle.createCenteredBoldStyle(workbook, (short) 11);
+        CellStyle centerBold10 = CardStyle.createCenteredBoldStyle(workbook, (short) 10);
+        CellStyle leftBold10 = CardStyle.createLeftBoldStyle(workbook, (short) 10);
+
         Object[][] values = {
-                {3, 1, 3, item.getName() + "\n" + item.getSize()}, // 3(1-3)
-                {4, 1, 1, "Marking"},
-                {5, 1, 1, "РАЗМЕР/Size"},
-                {6, 1, 1, "Кол-во/Q-ty"},
-                {7, 1, 1, "Кол-во в упак/шт."},
-                {8, 1, 1, "Вес упак Кг/Kgs"},
-                {9, 1, 1, ""},  // пустая строка
-                {10, 1, 1, "ORDER:"},
-                {4, 2, 3, item.getMarking()},  // 4(2-3)
-                {5, 2, 3, item.getSize()},     // 5(2-3)
-                {7, 3, 3, "Шт / PCS"},        // 7(3)
-                {8, 3, 3, "Кг/Kgs"},          // 8(3)
-                {9, 2, 3, "Сделано в КНР"},   // 9(2-3)
-                {10, 2, 3, item.getOrder()}   // 10(2-3)
+                {3, 1, 3, item.getName() + "\n" + item.getSize(), centerBold11},  // 3(1-3)
+                {4, 1, 1, "Marking", leftBold10},
+                {5, 1, 1, "РАЗМЕР/Size", leftBold10},
+                {7, 1, 1, "Кол-во в упак/шт.", leftBold10},
+                {8, 1, 1, "Вес упак Кг/Kgs", leftBold10},
+                {10, 1, 1, "ORDER:", leftBold10},
+                {4, 2, 3, item.getMarking(), centerBold10},  // 4(2-3)
+                {5, 2, 3, item.getSize(), centerBold10},     // 5(2-3)
+                {7, 2, 2, "Шт / PCS", centerBold10},        // 7(2)
+                {7, 3, 3, "", leftBold10},                  // 7(3)
+                {8, 3, 3, "Кг/Kgs", centerBold10},          // 8(3)
+                {8, 3, 3, "", leftBold10},                  // 8(3)
+                {9, 2, 3, "Сделано в КНР", leftBold10},     // 9(2-3)
+                {10, 2, 3, item.getOrder(), leftBold10}     // 10(2-3)
         };
 
         for (Object[] val : values) {

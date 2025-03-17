@@ -9,57 +9,64 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class CardCreator {
-
-    // Метод для создания и сохранения карточки
     public void createCard(XSSFWorkbook workbook, XSSFSheet sheet, ItemLargeBox item, int startRow, int startCol) throws IOException {
         CelFiller celFiller = new CelFiller(workbook, sheet);
 
-        // Динамически устанавливаем ширину столбцов
-        for (int i = 0; i < 3; i++) {
-            sheet.setColumnWidth(startCol + i, (int) (((88 - 5) / 7.0 + 0.71) * 256));
-        }
+        // 1. Устанавливаем ширину столбцов
+        setColumnWidths(sheet, startCol);
 
-        // Динамически создаем строки, если они не существуют
+        // 2. Создаем строки, если их нет
         for (int i = startRow; i < startRow + 10; i++) {
             if (sheet.getRow(i) == null) {
                 sheet.createRow(i);
             }
         }
 
-        // Устанавливаем высоту строк
+        // 3. Устанавливаем высоту строк
         sheet.getRow(startRow).setHeightInPoints(73.5f);
         sheet.getRow(startRow + 1).setHeightInPoints(69.0f);
         sheet.getRow(startRow + 2).setHeightInPoints(35.25f);
 
-        // Добавляем объединенные области
+        // 4. Добавляем объединенные области
         CardStyle.addMergedRegions(sheet, startRow, startCol);
 
-        // Применяем стили к ячейкам
-        for (int row = startRow; row <= startRow + 9; row++) {  // 10 строк
+
+
+        // 6. Применяем стили к ячейкам
+        for (int row = startRow; row <= startRow + 9; row++) {
             Row sheetRow = sheet.getRow(row);
             if (sheetRow == null) {
                 sheetRow = sheet.createRow(row);
             }
             for (int col = startCol; col <= startCol + 2; col++) {
                 Cell cell = sheetRow.createCell(col);
-
-                // Применяем стиль
                 CellStyle cellStyle = CardStyle.createBorderedCellStyle(workbook, startRow, startCol, row, col);
                 cell.setCellStyle(cellStyle);
             }
         }
 
-// Добавляем объединенные области
-        CardStyle.addMergedRegions(sheet, startRow, startCol);
-
-        // Заполняем карточку данными
-//        celFiller.fillCells(item, startRow, startCol);
-
-        // Добавляем изображения
+        // 7. Добавляем изображения
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
                 startRow, startCol, startRow + 1, startCol + 2, 420000, 150000);
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Screw.jpg",
                 startRow + 1, startCol, startRow + 2, startCol + 2, 400000, 130000);
+
+        // ✅ 5. Повторно устанавливаем ширину столбцов (исправление!)
+        setColumnWidths(sheet, startCol);
     }
 
+
+    // Новый метод для установки ширины столбцов
+    private void setColumnWidths(XSSFSheet sheet, int startCol) {
+        sheet.setColumnWidth(startCol, (int) (((124 - 5) / 7.0 + 0.71) * 256)); // 1-й столбец (124 px)
+        sheet.setColumnWidth(startCol + 1, (int) (((88 - 5) / 7.0 + 0.71) * 256)); // 2-й столбец (88 px)
+        sheet.setColumnWidth(startCol + 2, (int) (((88 - 5) / 7.0 + 0.71) * 256)); // 3-й столбец (88 px)
+    }
+//    private void setColumnWidths(XSSFSheet sheet, int startCol) {
+//        sheet.setColumnWidth(startCol, 6000); // Пример фиксированного значения
+//        sheet.setColumnWidth(startCol + 1, 6000);
+//        sheet.setColumnWidth(startCol + 2, 6000);
+//    }
 }
+
+

@@ -5,12 +5,11 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class CardCreator {
     public void createCard(XSSFWorkbook workbook, XSSFSheet sheet, ItemLargeBox item, int startRow, int startCol) throws IOException {
-        CelFiller celFiller = new CelFiller(workbook, sheet);
+        CellFiller cellFiller = new CellFiller(workbook, sheet);
 
         // 1. Устанавливаем ширину столбцов
         setColumnWidths(sheet, startCol);
@@ -44,7 +43,8 @@ public class CardCreator {
                 cell.setCellStyle(cellStyle);
             }
         }
-
+//        celFiller.fillCells(item,startRow,startCol);
+        cellFiller.fillCellsWithThree(startRow, startCol, startRow + 9, startCol + 2);
         // 7. Добавляем изображения
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
                 startRow, startCol, startRow + 1, startCol + 2, 420000, 150000);

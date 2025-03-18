@@ -1,14 +1,13 @@
 package com.anton.newpackage;
 
 import com.anton.labeling.objects.ItemLargeBox;
-import com.anton.labeling.service.largeBox.ImageHandler;
+import com.anton.labeling.service.irrelevantOld.ImageHandler;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class DynamicExcelGenerator {

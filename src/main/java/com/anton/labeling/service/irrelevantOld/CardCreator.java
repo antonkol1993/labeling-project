@@ -1,4 +1,4 @@
-package com.anton.labeling.service.largeBox;
+package com.anton.labeling.service.irrelevantOld;
 
 
 import com.anton.labeling.objects.ItemLargeBox;

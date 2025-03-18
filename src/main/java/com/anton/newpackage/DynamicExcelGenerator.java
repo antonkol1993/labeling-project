@@ -1,28 +1,32 @@
 package com.anton.newpackage;
 
 import com.anton.labeling.objects.ItemLargeBox;
+import com.anton.labeling.service.largeBox.ImageHandler;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class DynamicExcelGenerator {
-    private final Sheet sheet;
+    private final XSSFSheet sheet;
     private final int startRow;
     private final int startCol;
+    private final XSSFWorkbook workbook;
 
-    public DynamicExcelGenerator(Sheet sheet, int startRow, int startCol) {
+    public DynamicExcelGenerator(XSSFSheet sheet, int startRow, int startCol, XSSFWorkbook workbook) {
         this.sheet = sheet;
         this.startRow = startRow;
         this.startCol = startCol;
+        this.workbook = sheet.getWorkbook();
     }
 
-    public void addCard(ItemLargeBox itemLargeBox) {
+    public void addCard(ItemLargeBox itemLargeBox) throws IOException {
         // Определяем стили
-        Workbook workbook = sheet.getWorkbook();
+
         CellStyle style1 = createCellStyle(workbook, "Calibri", false, IndexedColors.WHITE, BorderStyle.MEDIUM, HorizontalAlignment.CENTER);
         CellStyle style2 = createCellStyle(workbook, "Arial", true, IndexedColors.WHITE, BorderStyle.MEDIUM, HorizontalAlignment.CENTER);
         CellStyle style3 = createCellStyle(workbook, "Arial", true, IndexedColors.WHITE, BorderStyle.THIN, HorizontalAlignment.CENTER);
@@ -35,9 +39,9 @@ public class DynamicExcelGenerator {
         // Заполняем таблицу относительно начальной точки
 // startRow = 1 строка, startCol = 1 столбец (B)
         createMergedCell(sheet, startRow, startCol, startRow, startCol + 2,
-                "Label of organization", style1); // row[1] col[B-D] (объединённые)
+                "", style1); // row[1] col[B-D] (объединённые)
         createMergedCell(sheet, startRow + 1, startCol, startRow + 1, startCol + 2,
-                "Photo of element", style2); // row[2] col[B-D] (объединённые)
+                "", style2); // row[2] col[B-D] (объединённые)
         createMergedCell(sheet, startRow + 2, startCol, startRow + 2, startCol + 2,
                 itemLargeBox.getName() + "\n" + itemLargeBox.getSize(), style2); // row[3] col[B-D] (объединённые)
 
@@ -75,6 +79,12 @@ public class DynamicExcelGenerator {
         createCell(sheet, startRow + 9, startCol, "ORDER:", style4); // row[10] col[B]
         createMergedCell(sheet, startRow + 9, startCol + 1, startRow + 9, startCol + 2,
                 itemLargeBox.getOrder(), style4); // row[10] col[C-D] (объединённые)
+
+        // Работа с изображениями
+        ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
+                startRow - 1, startCol - 1, startRow - 1, startCol + 1, 420000, 150000);
+        ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Screw.jpg",
+                startRow, startCol - 1, startRow, startCol + 1, 400000, 130000);
     }
 
     private static CellStyle createCellStyle(Workbook workbook, String fontName, boolean bold, IndexedColors bgColor, BorderStyle border, HorizontalAlignment alignment) {

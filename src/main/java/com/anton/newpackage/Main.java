@@ -2,6 +2,7 @@ package com.anton.newpackage;
 
 import com.anton.labeling.objects.ItemLargeBox;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileOutputStream;
@@ -23,10 +24,10 @@ public class Main {
         int startCol = 2;
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Sheet1");
+            XSSFSheet sheet = workbook.createSheet("Sheet1");
 
             for (int i = 0; i < 30; i++) {
-                DynamicExcelGenerator generator = new DynamicExcelGenerator(sheet, startRow, startCol);
+                DynamicExcelGenerator generator = new DynamicExcelGenerator(sheet, startRow, startCol,workbook);
                 generator.addCard(item);
                 startCol += 4; // Оставляем 1 столбец между карточками
             }

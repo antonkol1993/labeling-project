@@ -1,16 +1,16 @@
-package com.anton.labeling.service.irrelevantOld;
+package com.anton.service;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFDrawing;
+import org.apache.commons.compress.utils.IOUtils;
+import org.apache.poi.ss.usermodel.Picture;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.ss.usermodel.Picture;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.commons.compress.utils.IOUtils;
 
 public class ImageHandler {
     public static void addImageToSheet(XSSFWorkbook workbook, XSSFSheet sheet, String imagePath,

@@ -1,7 +1,6 @@
-package com.anton.newpackage;
+package com.anton.service;
 
 import com.anton.labeling.objects.ItemLargeBox;
-import com.anton.labeling.service.irrelevantOld.ImageHandler;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFFont;

@@ -13,4 +13,5 @@ public class ItemLargeBox {
     private String order;
 
     private String nameAndSize;
+    private Integer invoiceItemNumber;
 }

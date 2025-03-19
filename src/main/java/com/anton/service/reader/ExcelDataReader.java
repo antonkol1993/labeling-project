@@ -1,5 +1,6 @@
 package com.anton.service.reader;
 
+
 import com.anton.labeling.objects.ItemLargeBox;
 import org.apache.poi.ss.usermodel.*;
 
@@ -21,7 +22,7 @@ public class ExcelDataReader {
         boolean headersProcessed = false;
 
         for (Row row : sheet) {
-            if (row.getRowNum() < 2) continue; // Пропускаем заголовки
+            if (row.getRowNum() < 2) continue; // Пропускаем заголовки (читаем с 3 строки)
 
             if (!headersProcessed) {
                 processHeaders(row);
@@ -66,11 +67,16 @@ public class ExcelDataReader {
 
     private ItemLargeBox processDataBlock(Row row) {
         ItemLargeBox item = new ItemLargeBox();
-        item.setName(getCellValue(row.getCell(0)));
-        item.setSize(getCellValue(row.getCell(1)));
-        item.setQuantityInBox(getCellValue(row.getCell(2)));
-        item.setMarking(getCellValue(row.getCell(3)));
-        item.setOrder(getCellValue(row.getCell(4)));
+
+        // Читаем колонку A (индекс 0) - invoiceItemNumber
+        item.setInvoiceItemNumber(getIntegerValue(row.getCell(0)));
+
+        // Читаем B-F (индексы 1-5)
+        item.setName(getCellValue(row.getCell(1)));
+        item.setSize(getCellValue(row.getCell(2)));
+        item.setQuantityInBox(getCellValue(row.getCell(3)));
+        item.setMarking(getCellValue(row.getCell(4)));
+        item.setOrder(getCellValue(row.getCell(5)));
 
         item.setNameAndSize(item.getName() + "\n" + item.getSize());
 
@@ -82,7 +88,8 @@ public class ExcelDataReader {
     }
 
     private boolean isEmptyItem(ItemLargeBox item) {
-        return (item.getName() == null || item.getName().trim().isEmpty()) &&
+        return (item.getInvoiceItemNumber() == null) &&
+                (item.getName() == null || item.getName().trim().isEmpty()) &&
                 (item.getSize() == null || item.getSize().trim().isEmpty()) &&
                 (item.getQuantityInBox() == null || item.getQuantityInBox().trim().isEmpty()) &&
                 (item.getMarking() == null || item.getMarking().trim().isEmpty()) &&
@@ -101,7 +108,7 @@ public class ExcelDataReader {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     return cell.getDateCellValue().toString();
                 }
-                return String.valueOf(cell.getNumericCellValue());
+                return String.valueOf((int) cell.getNumericCellValue()); // Преобразуем в int, если число
             case BOOLEAN:
                 return String.valueOf(cell.getBooleanCellValue());
             case FORMULA:
@@ -111,5 +118,22 @@ public class ExcelDataReader {
             default:
                 return "";
         }
+    }
+
+    private Integer getIntegerValue(Cell cell) {
+        if (cell == null) {
+            return null;
+        }
+        if (cell.getCellType() == CellType.NUMERIC) {
+            return (int) cell.getNumericCellValue(); // Преобразуем число в Integer
+        }
+        if (cell.getCellType() == CellType.STRING) {
+            try {
+                return Integer.parseInt(cell.getStringCellValue().trim());
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
     }
 }

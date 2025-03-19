@@ -1,42 +1,39 @@
 package com.anton;
 
-import com.anton.labeling.objects.ItemLargeBox;
-import com.anton.service.DynamicExcelGenerator;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
+import com.anton.service.generator.DynamicExcelGenerator;
+import com.anton.service.reader.ExcelDataReader;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
+import com.anton.labeling.objects.ItemLargeBox;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class ConsoleApp {
-    public static void main(String[] args) {
-        ItemLargeBox item = new ItemLargeBox();
-        item.setName("Саморезы гипс/металл");
-        item.setSize("3.5x25");
-        item.setMarking("YZP");
-        item.setQuantityInBox("1000");
-        item.setOrder("2155695PL");
-        item.setNameAndSize(item.getName() + "\t" + item.getSize());
+    public static void main(String[] args) throws IOException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Выберите формат файла: 1 - .xlsx, 2 - .xls");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Очистка буфера после nextInt
+
+        String fileName = choice == 1 ? "output.xlsx" : "output.xls";
+        boolean isXSSF = choice == 1;
+
+        ExcelDataReader excelDataReader = new ExcelDataReader();
+        List<List<ItemLargeBox>> dataBlocks = excelDataReader.readExcel("excel-example/DataFromInvoice .xlsx");
 
 
-        String fileName = "output.xlsx";
-        int startRow = 2;
-        int startCol = 2;
 
-        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-            XSSFSheet sheet = workbook.createSheet("Sheet1");
+        try (Workbook workbook = isXSSF ? new XSSFWorkbook() : new HSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet1");
 
-//            for (int j = 0; j < 5; j++) {
-//                int temp = startCol;
+            DynamicExcelGenerator generator = new DynamicExcelGenerator(workbook, sheet);
+            generator.generateCardsFromBlocks(dataBlocks);
 
-                for (int i = 0; i < 30; i++) {
-                    DynamicExcelGenerator generator = new DynamicExcelGenerator(sheet, startRow, startCol, workbook);
-                    generator.addCard(item);
-                    startCol += 4; // Оставляем 1 столбец между карточками
-                }
-//                startRow += 12;
-//                startCol=temp;
-//            }
             try (FileOutputStream fileOut = new FileOutputStream(fileName)) {
                 workbook.write(fileOut);
             }

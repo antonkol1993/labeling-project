@@ -73,7 +73,7 @@ public class DynamicExcelGenerator {
         // Добавление изображений
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
                 startRow - 1, startCol, startRow - 1, startCol + 2, 420000, 150000);
-        ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Screw.jpg",
+        ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Example.jpg",
                 startRow, startCol, startRow, startCol + 2, 400000, 130000);
     }
 

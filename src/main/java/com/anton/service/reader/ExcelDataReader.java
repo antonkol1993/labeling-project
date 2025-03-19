@@ -74,8 +74,8 @@ public class ExcelDataReader {
         // Читаем B-F (индексы 1-5)
         item.setName(getCellValue(row.getCell(1)));
         item.setSize(getCellValue(row.getCell(2)));
-        item.setQuantityInBox(getCellValue(row.getCell(3)));
-        item.setMarking(getCellValue(row.getCell(4)));
+        item.setMarking(getCellValue(row.getCell(3)));
+        item.setQuantityInBox(getCellValue(row.getCell(4)));
         item.setOrder(getCellValue(row.getCell(5)));
 
         item.setNameAndSize(item.getName() + "\n" + item.getSize());

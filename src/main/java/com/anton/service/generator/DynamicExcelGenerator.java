@@ -13,8 +13,8 @@ public class DynamicExcelGenerator {
     private final Workbook workbook;
     private final Sheet sheet;
     private final boolean isXSSF;
-    private int startRow = 1;
-    private int startCol = 1;
+    private int startRow = 2;
+    private int startCol = 2;
 
     public DynamicExcelGenerator(Workbook workbook, Sheet sheet) {
         this.workbook = workbook;
@@ -35,12 +35,12 @@ public class DynamicExcelGenerator {
     }
 
     public void addCard(ItemLargeBox itemLargeBox) throws IOException {
-        CellStyle style1 = createCellStyle("Calibri", false, BorderStyle.MEDIUM, HorizontalAlignment.CENTER);
+        CellStyle style1 = createCellStyle("Arial", false, BorderStyle.MEDIUM, HorizontalAlignment.CENTER);
         CellStyle style2 = createCellStyle("Arial", true, BorderStyle.MEDIUM, HorizontalAlignment.CENTER);
         CellStyle style3 = createCellStyle("Arial", true, BorderStyle.THIN, HorizontalAlignment.CENTER);
         CellStyle style4 = createCellStyle("Arial", true, BorderStyle.THIN, HorizontalAlignment.GENERAL);
 
-        setColumnWidths(sheet, startCol + 1); // Корректный сдвиг вправо
+        setColumnWidths(sheet, startCol); // Корректный сдвиг вправо
         setRowHeights(sheet, startRow); // Корректный сдвиг вниз
 
         createMergedCell(startRow, startCol + 1, startRow, startCol + 3, "", style1);
@@ -73,9 +73,9 @@ public class DynamicExcelGenerator {
 
         // Добавление изображений
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
-                startRow, startCol + 1, startRow, startCol + 3, 420000, 150000);
+                startRow - 1, startCol , startRow - 1, startCol + 2, 420000, 150000);
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Screw.jpg",
-                startRow + 1, startCol + 1, startRow + 1, startCol + 3, 400000, 130000);
+                startRow , startCol , startRow , startCol + 2, 400000, 130000);
     }
 
     private CellStyle createCellStyle(String fontName, boolean bold, BorderStyle border, HorizontalAlignment alignment) {
@@ -94,36 +94,43 @@ public class DynamicExcelGenerator {
 
     private void setColumnWidths(Sheet sheet, int startCol) {
         sheet.setColumnWidth(startCol, (int) (((124 - 5) / 7.0 + 0.71) * 256));
-        sheet.setColumnWidth(startCol + 1, (int) (((88 - 5) / 7.0 + 0.71) * 256));
+        sheet.setColumnWidth(startCol+1, (int) (((88 - 5) / 7.0 + 0.71) * 256));
         sheet.setColumnWidth(startCol + 2, (int) (((88 - 5) / 7.0 + 0.71) * 256));
     }
 
     private void setRowHeights(Sheet sheet, int startRow) {
-        setRowHeight(sheet, startRow + 1, 73.5f);
-        setRowHeight(sheet, startRow + 2, 69.0f);
-        setRowHeight(sheet, startRow + 3, 35.25f);
+        setRowHeight(sheet, startRow, 73.5f);
+        setRowHeight(sheet, startRow + 1, 69.0f);
+        setRowHeight(sheet, startRow + 2, 35.25f);
     }
 
     private void setRowHeight(Sheet sheet, int rowIndex, float height) {
-        Row row = sheet.getRow(rowIndex);
+        Row row = sheet.getRow(rowIndex - 1);
         if (row == null) {
-            row = sheet.createRow(rowIndex);
+            row = sheet.createRow(rowIndex - 1);
         }
         row.setHeightInPoints(height);
     }
 
     private void createCell(int row, int col, String value, CellStyle style) {
-        Row sheetRow = sheet.getRow(row);
+        Row sheetRow = sheet.getRow(row - 1);
         if (sheetRow == null) {
-            sheetRow = sheet.createRow(row);
+            sheetRow = sheet.createRow(row - 1);
         }
-        Cell cell = sheetRow.createCell(col);
+        Cell cell = sheetRow.createCell(col - 1);
         cell.setCellValue(value);
         cell.setCellStyle(style);
     }
 
     private void createMergedCell(int startRow, int startCol, int endRow, int endCol, String value, CellStyle style) {
-        sheet.addMergedRegion(new CellRangeAddress(startRow, endRow, startCol, endCol));
+        sheet.addMergedRegion(new CellRangeAddress(startRow - 1, endRow - 1, startCol - 1, endCol - 1));
+
+        for (int row = startRow; row <= endRow; row++) {
+            for (int col = startCol; col <= endCol; col++) {
+                createCell(row, col, "", style);
+            }
+        }
+
         createCell(startRow, startCol, value, style);
     }
 }

@@ -89,6 +89,7 @@ public class DynamicExcelGenerator {
         style.setBorderTop(border);
         style.setBorderLeft(border);
         style.setBorderRight(border);
+        style.setWrapText(true); // Включаем перенос текста
         return style;
     }
 

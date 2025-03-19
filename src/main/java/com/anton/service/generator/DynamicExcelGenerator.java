@@ -35,10 +35,10 @@ public class DynamicExcelGenerator {
     }
 
     public void addCard(ItemLargeBox itemLargeBox) throws IOException {
-        CellStyle style1 = createCellStyle("Arial", false, BorderStyle.MEDIUM, HorizontalAlignment.CENTER);
-        CellStyle style2 = createCellStyle("Arial", true, BorderStyle.MEDIUM, HorizontalAlignment.CENTER);
-        CellStyle style3 = createCellStyle("Arial", true, BorderStyle.THIN, HorizontalAlignment.CENTER);
-        CellStyle style4 = createCellStyle("Arial", true, BorderStyle.THIN, HorizontalAlignment.GENERAL);
+        CellStyle style1 = createCellStyle("Arial", false, BorderStyle.MEDIUM, HorizontalAlignment.CENTER, (short) 10);
+        CellStyle style2 = createCellStyle("Arial", true, BorderStyle.MEDIUM, HorizontalAlignment.CENTER, (short) 11);
+        CellStyle style3 = createCellStyle("Arial", true, BorderStyle.THIN, HorizontalAlignment.CENTER, (short) 10);
+        CellStyle style4 = createCellStyle("Arial", true, BorderStyle.THIN, HorizontalAlignment.GENERAL, (short) 10);
 
         setColumnWidths(sheet, startCol); // Корректный сдвиг вправо
         setRowHeights(sheet, startRow); // Корректный сдвиг вниз
@@ -53,9 +53,8 @@ public class DynamicExcelGenerator {
         createCell(startRow + 4, startCol + 1, "РАЗМЕР/Size", style4);
         createMergedCell(startRow + 4, startCol + 2, startRow + 4, startCol + 3, itemLargeBox.getSize(), style3);
 
-        createCell(startRow + 5, startCol + 1, "Кол-во/Q-ty", style4);
-        createCell(startRow + 5, startCol + 2, "", style3);
-        createCell(startRow + 5, startCol + 3, "Шт / PCS", style4);
+        createCell(startRow + 5, startCol + 1, "", style4);
+        createMergedCell(startRow + 5, startCol + 2, startRow + 5, startCol + 3, "", style3);
 
         createCell(startRow + 6, startCol + 1, "Кол-во в упак/шт.", style4);
         createCell(startRow + 6, startCol + 2, itemLargeBox.getQuantityInBox(), style3);
@@ -73,16 +72,17 @@ public class DynamicExcelGenerator {
 
         // Добавление изображений
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
-                startRow - 1, startCol , startRow - 1, startCol + 2, 420000, 150000);
+                startRow - 1, startCol, startRow - 1, startCol + 2, 420000, 150000);
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Screw.jpg",
-                startRow , startCol , startRow , startCol + 2, 400000, 130000);
+                startRow, startCol, startRow, startCol + 2, 400000, 130000);
     }
 
-    private CellStyle createCellStyle(String fontName, boolean bold, BorderStyle border, HorizontalAlignment alignment) {
+    private CellStyle createCellStyle(String fontName, boolean bold, BorderStyle border, HorizontalAlignment alignment, short fontSize) {
         CellStyle style = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setFontName(fontName);
         font.setBold(bold);
+        font.setFontHeightInPoints(fontSize);
         style.setFont(font);
         style.setAlignment(alignment);
         style.setBorderBottom(border);
@@ -94,7 +94,7 @@ public class DynamicExcelGenerator {
 
     private void setColumnWidths(Sheet sheet, int startCol) {
         sheet.setColumnWidth(startCol, (int) (((124 - 5) / 7.0 + 0.71) * 256));
-        sheet.setColumnWidth(startCol+1, (int) (((88 - 5) / 7.0 + 0.71) * 256));
+        sheet.setColumnWidth(startCol + 1, (int) (((88 - 5) / 7.0 + 0.71) * 256));
         sheet.setColumnWidth(startCol + 2, (int) (((88 - 5) / 7.0 + 0.71) * 256));
     }
 

@@ -70,12 +70,19 @@ public class DynamicExcelGenerator {
         createCell(startRow + 9, startCol + 1, "ORDER:", style4);
         createMergedCell(startRow + 9, startCol + 2, startRow + 9, startCol + 3, itemLargeBox.getOrder(), style4);
 
+        // 🔹 Авторазмер всех строк карточки
+        for (int i = startRow + 2; i <= startRow + 9; i++) {
+            autoSizeRow(sheet, i);
+        }
+
+
         // Добавление изображений
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
                 startRow - 1, startCol, startRow - 1, startCol + 2, 420000, 150000);
         ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Example.jpg",
                 startRow, startCol, startRow, startCol + 2, 400000, 130000);
     }
+
 
     private CellStyle createCellStyle(String fontName, boolean bold, BorderStyle border, HorizontalAlignment alignment, short fontSize) {
         CellStyle style = workbook.createCellStyle();
@@ -133,6 +140,24 @@ public class DynamicExcelGenerator {
         }
 
         createCell(startRow, startCol, value, style);
+    }
+
+    private void autoSizeRow(Sheet sheet, int rowIndex) {
+        Row row = sheet.getRow(rowIndex - 1);
+        if (row != null) {
+            int maxTextLength = 0;
+
+            // Проверяем все колонки в строке
+            for (Cell cell : row) {
+                if (cell.getCellType() == CellType.STRING) {
+                    int textLength = cell.getStringCellValue().length();
+                    maxTextLength = Math.max(maxTextLength, textLength);
+                }
+            }
+
+            int lineCount = (int) Math.ceil(maxTextLength / 20.0); // 20 символов в строке
+            row.setHeightInPoints(lineCount * sheet.getDefaultRowHeightInPoints()); // Авторазмер
+        }
     }
 
 

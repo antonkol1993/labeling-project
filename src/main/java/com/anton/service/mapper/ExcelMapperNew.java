@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 import java.util.*;
 
-public class ExcelMapper {
+public class ExcelMapperNew {
     public static void main(String[] args) throws IOException {
         String excelFilePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
         String propertiesFilePath = "src/main/resources/mapping_item-invoice.properties";
@@ -39,48 +39,15 @@ public class ExcelMapper {
             for (Row row : sheet) {
                 for (Cell cell : row) {
                     if (isMergedInRange(sheet, cell, 2, 14)) { // Проверяем, объединена ли ячейка в колонках C:O (индексы 2–14)
-                        int rowIndex = row.getRowNum();
-                        Cell bCell = row.getCell(1); // Колонка B (индекс 1)
-                        Cell above = (rowIndex > 0) ? sheet.getRow(rowIndex - 1).getCell(1) : null;
-                        Cell below = (rowIndex < sheet.getLastRowNum()) ? sheet.getRow(rowIndex + 1).getCell(1) : null;
-
-                        if (isValid(above, below, bCell)) {
-                            String value = getMergedCellValue(sheet, cell).trim();
-                            if (mapping.containsKey(value)) {
-                                result.put(mapping.get(value), value);
-                            }
+                        String value = getMergedCellValue(sheet, cell).trim();
+                        if (mapping.containsKey(value)) {
+                            result.put(mapping.get(value), value);
                         }
                     }
                 }
             }
         }
-
         return result;
-    }
-
-    private static boolean isValid(Cell above, Cell below, Cell bCell) {
-        boolean bCellEmpty = isCellEmpty(bCell);
-        boolean aboveIsNumber = isNumeric(above);
-        boolean belowIsNumber = isNumeric(below);
-
-        if (aboveIsNumber && belowIsNumber) {
-            return bCellEmpty && (getNumericValue(above) + 1 == getNumericValue(below));
-        } else if (!aboveIsNumber && belowIsNumber) {
-            return bCellEmpty && getNumericValue(below) == 1;
-        }
-        return false;
-    }
-
-    private static boolean isNumeric(Cell cell) {
-        return cell != null && cell.getCellType() == CellType.NUMERIC;
-    }
-
-    private static double getNumericValue(Cell cell) {
-        return cell.getNumericCellValue();
-    }
-
-    private static boolean isCellEmpty(Cell cell) {
-        return cell == null || cell.getCellType() == CellType.BLANK;
     }
 
     private static String getMergedCellValue(Sheet sheet, Cell cell) {
@@ -114,5 +81,4 @@ public class ExcelMapper {
         }
         return false;
     }
-
 }

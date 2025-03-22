@@ -60,17 +60,24 @@ public class ExcelInvoiceParser {
                     }
                 }
 
-                // Парсим строку, если в колонке B есть число
+                // Проверяем наличие данных в колонке B
                 Cell elementCell = row.getCell(1);
                 if (isNumeric(elementCell)) {
-                    if (currentGroup == null) {
-                        currentGroup = new ArrayList<>();
-                        groupedData.add(currentGroup);
+                    // Проверка строки выше на наличие объединённых ячеек с C по O
+                    Row prevRow = sheet.getRow(row.getRowNum() - 1); // Строка выше
+                    if (prevRow != null) {
+                        // Проверяем, есть ли объединение в строке выше (C-O)
+                        Cell prevElementCell = prevRow.getCell(2); // Проверка в строке выше с C по O
+                        if (isMergedInRange(sheet, prevElementCell, 2, 14)) {
+                            currentGroup = new ArrayList<>(); // Создаём новую группу
+                            groupedData.add(currentGroup);     // Добавляем её в общий список
+                            System.out.println("Создан новый список для группы.");
+                        }
                     }
 
+                    // Создаем объект InvoiceItemData
                     InvoiceItemData item = new InvoiceItemData();
                     item.setProformaNo(currentProformaNo);
-
                     item.setElementNumber(getIntegerValueOrNull(elementCell));
                     item.setSize(getCellValue(row.getCell(2)));
                     item.setPartNo(getCellValue(row.getCell(3)));
@@ -92,10 +99,12 @@ public class ExcelInvoiceParser {
                     }
                     item.setTotal(totalValue);
 
+                    // Добавляем объект в текущую группу
                     currentGroup.add(item);
                 }
             }
         }
+
         return groupedData;
     }
 

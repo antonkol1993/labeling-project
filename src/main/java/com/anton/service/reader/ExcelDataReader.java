@@ -1,7 +1,7 @@
 package com.anton.service.reader;
 
 
-import com.anton.labeling.objects.ItemLargeBox;
+import com.anton.labeling.objects.LabelLargeBox;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.File;
@@ -11,10 +11,10 @@ import java.util.*;
 
 public class ExcelDataReader {
 
-    private final List<List<ItemLargeBox>> dataBlocks = new ArrayList<>();
-    private List<ItemLargeBox> currentBlock = new ArrayList<>();
+    private final List<List<LabelLargeBox>> dataBlocks = new ArrayList<>();
+    private List<LabelLargeBox> currentBlock = new ArrayList<>();
 
-    public List<List<ItemLargeBox>> readExcel(String filePath) throws IOException {
+    public List<List<LabelLargeBox>> readExcel(String filePath) throws IOException {
         FileInputStream file = new FileInputStream(new File(filePath));
         Workbook workbook = WorkbookFactory.create(file);
         Sheet sheet = workbook.getSheetAt(0);
@@ -31,7 +31,7 @@ public class ExcelDataReader {
             }
 
             // Обрабатываем строку
-            ItemLargeBox item = processDataBlock(row);
+            LabelLargeBox item = processDataBlock(row);
 
             if (item != null) {
                 currentBlock.add(item);
@@ -53,7 +53,7 @@ public class ExcelDataReader {
         return dataBlocks;
     }
 
-    public List<List<ItemLargeBox>> getDataBlocks() {
+    public List<List<LabelLargeBox>> getDataBlocks() {
         return dataBlocks;
     }
 
@@ -65,8 +65,8 @@ public class ExcelDataReader {
         System.out.println("\n-------------------------");
     }
 
-    private ItemLargeBox processDataBlock(Row row) {
-        ItemLargeBox item = new ItemLargeBox();
+    private LabelLargeBox processDataBlock(Row row) {
+        LabelLargeBox item = new LabelLargeBox();
 
         // Читаем колонку A (индекс 0) - invoiceItemNumber
         item.setInvoiceItemNumber(getIntegerValue(row.getCell(0)));
@@ -87,7 +87,7 @@ public class ExcelDataReader {
         return item;
     }
 
-    private boolean isEmptyItem(ItemLargeBox item) {
+    private boolean isEmptyItem(LabelLargeBox item) {
         return (item.getInvoiceItemNumber() == null) &&
                 (item.getName() == null || item.getName().trim().isEmpty()) &&
                 (item.getSize() == null || item.getSize().trim().isEmpty()) &&

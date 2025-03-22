@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 import java.util.*;
 
-public class ExcelMapperNamesOfelements {
+public class ExcelMapperNamesOfElements {
     public static void main(String[] args) throws IOException {
         String excelFilePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
         String propertiesFilePath = "src/main/resources/mapping_item-invoice.properties";

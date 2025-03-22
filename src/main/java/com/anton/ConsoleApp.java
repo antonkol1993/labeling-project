@@ -6,10 +6,9 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import com.anton.labeling.objects.ItemLargeBox;
+import com.anton.labeling.objects.LabelLargeBox;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -24,7 +23,7 @@ public class ConsoleApp {
         boolean isXSSF = choice == 1;
 
         ExcelDataReader excelDataReader = new ExcelDataReader();
-        List<List<ItemLargeBox>> dataBlocks = excelDataReader.readExcel("excel-example/DataFromInvoice .xlsx");
+        List<List<LabelLargeBox>> dataBlocks = excelDataReader.readExcel("excel-example/DataFromInvoice .xlsx");
 
 
 

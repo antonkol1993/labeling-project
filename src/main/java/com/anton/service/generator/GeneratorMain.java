@@ -1,6 +1,6 @@
 package com.anton.service.generator;
 
-import com.anton.labeling.objects.ItemLargeBox;
+import com.anton.labeling.objects.LabelLargeBox;
 import com.anton.service.reader.ExcelDataReader;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -17,7 +17,7 @@ public class GeneratorMain {
         DynamicExcelGenerator generator = new DynamicExcelGenerator(workbook, sheet);
 
         ExcelDataReader reader = new ExcelDataReader();
-        List<List<ItemLargeBox>> dataBlocks = reader.readExcel("excel-example/DataFromInvoice .xlsx");
+        List<List<LabelLargeBox>> dataBlocks = reader.readExcel("excel-example/DataFromInvoice .xlsx");
 
         generator.generateCardsFromBlocks(dataBlocks);
 

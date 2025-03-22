@@ -1,6 +1,6 @@
 package com.anton.service.generator;
 
-import com.anton.labeling.objects.ItemLargeBox;
+import com.anton.labeling.objects.LabelLargeBox;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -22,10 +22,10 @@ public class DynamicExcelGenerator {
         this.isXSSF = workbook instanceof XSSFWorkbook;
     }
 
-    public void generateCardsFromBlocks(List<List<ItemLargeBox>> dataBlocks) throws IOException {
+    public void generateCardsFromBlocks(List<List<LabelLargeBox>> dataBlocks) throws IOException {
         int tempCol = startCol;
-        for (List<ItemLargeBox> block : dataBlocks) {
-            for (ItemLargeBox item : block) {
+        for (List<LabelLargeBox> block : dataBlocks) {
+            for (LabelLargeBox item : block) {
                 addCard(item);
                 startCol += 4; // Сдвигаем вправо на 4 колонки
             }
@@ -34,7 +34,7 @@ public class DynamicExcelGenerator {
         }
     }
 
-    public void addCard(ItemLargeBox itemLargeBox) throws IOException {
+    public void addCard(LabelLargeBox labelLargeBox) throws IOException {
         CellStyle style1 = createCellStyle("Arial", false, BorderStyle.MEDIUM, HorizontalAlignment.CENTER, (short) 10);
         CellStyle style2 = createCellStyle("Arial", true, BorderStyle.MEDIUM, HorizontalAlignment.CENTER, (short) 11);
         CellStyle style3 = createCellStyle("Arial", true, BorderStyle.THIN, HorizontalAlignment.CENTER, (short) 10);
@@ -45,19 +45,19 @@ public class DynamicExcelGenerator {
 
         createMergedCell(startRow, startCol + 1, startRow, startCol + 3, "", style1);
         createMergedCell(startRow + 1, startCol + 1, startRow + 1, startCol + 3, "", style2);
-        createMergedCell(startRow + 2, startCol + 1, startRow + 2, startCol + 3, itemLargeBox.getNameAndSize(), style2);
+        createMergedCell(startRow + 2, startCol + 1, startRow + 2, startCol + 3, labelLargeBox.getNameAndSize(), style2);
 
         createCell(startRow + 3, startCol + 1, "Marking", style4);
-        createMergedCell(startRow + 3, startCol + 2, startRow + 3, startCol + 3, itemLargeBox.getMarking(), style3);
+        createMergedCell(startRow + 3, startCol + 2, startRow + 3, startCol + 3, labelLargeBox.getMarking(), style3);
 
         createCell(startRow + 4, startCol + 1, "РАЗМЕР/Size", style4);
-        createMergedCell(startRow + 4, startCol + 2, startRow + 4, startCol + 3, itemLargeBox.getSize(), style3);
+        createMergedCell(startRow + 4, startCol + 2, startRow + 4, startCol + 3, labelLargeBox.getSize(), style3);
 
         createCell(startRow + 5, startCol + 1, "", style4);
         createMergedCell(startRow + 5, startCol + 2, startRow + 5, startCol + 3, "", style3);
 
         createCell(startRow + 6, startCol + 1, "Кол-во в упак/шт.", style4);
-        createCell(startRow + 6, startCol + 2, itemLargeBox.getQuantityInBox(), style3);
+        createCell(startRow + 6, startCol + 2, labelLargeBox.getQuantityInBox(), style3);
         createCell(startRow + 6, startCol + 3, "Шт / PCS", style4);
 
         createCell(startRow + 7, startCol + 1, "Вес упак Кг/Kgs", style4);
@@ -68,7 +68,7 @@ public class DynamicExcelGenerator {
         createMergedCell(startRow + 8, startCol + 2, startRow + 8, startCol + 3, "Сделано в КНР", style4);
 
         createCell(startRow + 9, startCol + 1, "ORDER:", style4);
-        createMergedCell(startRow + 9, startCol + 2, startRow + 9, startCol + 3, itemLargeBox.getOrder(), style4);
+        createMergedCell(startRow + 9, startCol + 2, startRow + 9, startCol + 3, labelLargeBox.getOrder(), style4);
 
         // 🔹 Авторазмер всех строк карточки
         for (int i = startRow + 2; i <= startRow + 9; i++) {

@@ -19,6 +19,7 @@ public class ExcelInvoiceParser {
             group.forEach(item -> System.out.println(
                     String.join(" | ",
                             Objects.toString(item.getProformaNo(), "null"),
+                            Objects.toString(item.getName(), "null"),
                             Objects.toString(item.getElementNumber(), "null"),
                             Objects.toString(item.getSize(), "null"),
                             Objects.toString(item.getPartNo(), "null"),
@@ -39,6 +40,7 @@ public class ExcelInvoiceParser {
 
 
     public static List<List<InvoiceItemData>> parseExcel(String filePath) throws IOException {
+        String groupName = "";
         List<List<InvoiceItemData>> groupedData = new ArrayList<>();
         List<InvoiceItemData> currentGroup = null;
         String currentProformaNo = null;
@@ -72,11 +74,15 @@ public class ExcelInvoiceParser {
                             currentGroup = new ArrayList<>(); // Создаём новую группу
                             groupedData.add(currentGroup);     // Добавляем её в общий список
                             System.out.println("Создан новый список для группы.");
+                            // Получаем имя из объединенной ячейки C-O
+                            groupName = getMergedCellValue(sheet, prevElementCell).trim();
+
                         }
                     }
 
                     // Создаем объект InvoiceItemData
                     InvoiceItemData item = new InvoiceItemData();
+                    item.setName(groupName);
                     item.setProformaNo(currentProformaNo);
                     item.setElementNumber(getIntegerValueOrNull(elementCell));
                     item.setSize(getCellValue(row.getCell(2)));
@@ -143,6 +149,17 @@ public class ExcelInvoiceParser {
             case NUMERIC -> String.valueOf(cell.getNumericCellValue());
             default -> null;
         };
+    }
+    private static String getMergedCellValue(Sheet sheet, Cell cell) {
+        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+            CellRangeAddress range = sheet.getMergedRegion(i);
+            if (range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
+                Row firstRow = sheet.getRow(range.getFirstRow());
+                Cell firstCell = firstRow.getCell(range.getFirstColumn());
+                return getCellValue(firstCell);
+            }
+        }
+        return getCellValue(cell);
     }
 
     // Возвращает Double значение ячейки или null, если ячейка пуста или не число (с учетом формулы)

@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.*;
 import java.util.*;
 
-public class ExcelMapperNew {
+public class ExcelMapperNamesOfelements {
     public static void main(String[] args) throws IOException {
         String excelFilePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
         String propertiesFilePath = "src/main/resources/mapping_item-invoice.properties";
@@ -38,10 +38,17 @@ public class ExcelMapperNew {
 
             for (Row row : sheet) {
                 for (Cell cell : row) {
-                    if (isMergedInRange(sheet, cell, 2, 14)) { // Проверяем, объединена ли ячейка в колонках C:O (индексы 2–14)
-                        String value = getMergedCellValue(sheet, cell).trim();
-                        if (mapping.containsKey(value)) {
-                            result.put(mapping.get(value), value);
+                    if (isMergedInRange(sheet, cell, 2, 14)) {
+                        int rowIndex = row.getRowNum();
+                        Cell bCell = row.getCell(1);
+                        Cell above = (rowIndex > 0) ? sheet.getRow(rowIndex - 1).getCell(1) : null;
+                        Cell below = (rowIndex < sheet.getLastRowNum()) ? sheet.getRow(rowIndex + 1).getCell(1) : null;
+
+                        if (isValid(above, below, bCell)) {
+                            String value = getMergedCellValue(sheet, cell).trim();
+                            if (mapping.containsKey(value)) {
+                                result.put(mapping.get(value), value);
+                            }
                         }
                     }
                 }
@@ -71,6 +78,50 @@ public class ExcelMapperNew {
         };
     }
 
+    private static double getNumericValue(Cell cell) {
+        try {
+            return cell.getCellType() == CellType.NUMERIC ? cell.getNumericCellValue() : Double.NaN;
+        } catch (Exception e) {
+            return Double.NaN;
+        }
+    }
+
+    private static boolean isValid(Cell above, Cell below, Cell bCell) {
+        boolean bCellEmpty = isCellEmpty(bCell);
+        boolean aboveIsNumber = isNumeric(above);
+        boolean belowIsNumber = isNumeric(below);
+
+        // Проверка на типы данных в ячейках, чтобы гарантировать правильную обработку
+        if (aboveIsNumber && belowIsNumber) {
+            return bCellEmpty && (getNumericValue(above) + 1 == getNumericValue(below));
+        } else if (!aboveIsNumber && belowIsNumber) {
+            return bCellEmpty && getNumericValue(below) == 1;
+        } else if (above != null && below != null && isCellText(above) && isCellText(below)) {
+            // Дополнительная логика для текстовых ячеек или других типов данных
+            return bCellEmpty && (getCellValue(above).equals(getCellValue(below)));
+        }
+        return false;
+    }
+
+    private static boolean isNumeric(Cell cell) {
+        if (cell == null) return false;
+        try {
+            Double.parseDouble(getCellValue(cell));  // Преобразуем в число для проверки
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static boolean isCellText(Cell cell) {
+        return cell != null && cell.getCellType() == CellType.STRING;
+    }
+
+    private static boolean isCellEmpty(Cell cell) {
+        return cell == null || cell.getCellType() == CellType.BLANK || getCellValue(cell).trim().isEmpty();
+    }
+
+
     private static boolean isMergedInRange(Sheet sheet, Cell cell, int colStart, int colEnd) {
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
             CellRangeAddress range = sheet.getMergedRegion(i);
@@ -81,4 +132,6 @@ public class ExcelMapperNew {
         }
         return false;
     }
+
+
 }

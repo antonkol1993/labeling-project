@@ -6,7 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LabelLargeBox {
-    private String name;
+    private String imagePath;
+    private String nameRus;
     private String size;
     private String marking;
     private String quantityInBox;

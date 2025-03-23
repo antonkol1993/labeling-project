@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class ExcelStyleReader {
     public static void main(String[] args) throws IOException {
-        String filePath = "excel-example/invoice .xls"; // Укажите путь к файлу
+        String filePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx"; // Укажите путь к файлу
 
         try (FileInputStream file = new FileInputStream(new File(filePath))) {
             Workbook workbook;

@@ -1,4 +1,4 @@
-package com.anton.service.mapper;
+package com.anton.service.reader;
 
 import com.anton.labeling.objects.InvoiceItemData;
 import org.apache.poi.ss.usermodel.*;
@@ -6,6 +6,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class ExcelInvoiceParser {
@@ -13,8 +14,8 @@ public class ExcelInvoiceParser {
     public static void main(String[] args) throws IOException {
         String filePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
         List<List<InvoiceItemData>> parsedData = ExcelInvoiceParser.parseExcel(filePath);
-
         parsedData.forEach(group -> {
+
             System.out.println("=== Новая группа ===");
             group.forEach(item -> System.out.println(
                     String.join(" | ",
@@ -33,9 +34,17 @@ public class ExcelInvoiceParser {
                             Objects.toString(item.getUnit(), "null"),
                             Objects.toString(item.getUnitPrice(), "null"),
                             Objects.toString(item.getTotal(), "null")
+
                     )
             ));
         });
+        DecimalFormat df = new DecimalFormat("#0.00"); // Формат с 2 знаками после запятой
+        double totalSum = parsedData.stream()
+                .flatMap(List::stream) // Разворачиваем группы в единый поток элементов
+                .mapToDouble(item -> Objects.requireNonNullElse(item.getTotal(), 0.0)) // Преобразуем в double, заменяя null на 0
+                .sum();
+
+        System.out.println("Общая сумма Total: " + df.format(totalSum));
     }
 
 
@@ -150,6 +159,7 @@ public class ExcelInvoiceParser {
             default -> null;
         };
     }
+
     private static String getMergedCellValue(Sheet sheet, Cell cell) {
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
             CellRangeAddress range = sheet.getMergedRegion(i);

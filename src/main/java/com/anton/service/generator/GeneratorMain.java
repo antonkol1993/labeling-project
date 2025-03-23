@@ -14,7 +14,7 @@ public class GeneratorMain {
     public static void main(String[] args) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Карточки");
-        DynamicExcelGenerator generator = new DynamicExcelGenerator(workbook, sheet);
+        DynamicExcelGeneratorLargeBoxes generator = new DynamicExcelGeneratorLargeBoxes(workbook, sheet);
 
         ExcelDataReader reader = new ExcelDataReader();
         List<List<LabelLargeBox>> dataBlocks = reader.readExcel("excel-example/DataFromInvoice .xlsx");

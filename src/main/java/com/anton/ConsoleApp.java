@@ -1,6 +1,6 @@
 package com.anton;
 
-import com.anton.service.generator.DynamicExcelGenerator;
+import com.anton.service.generator.DynamicExcelGeneratorLargeBoxes;
 import com.anton.service.reader.ExcelDataReader;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -30,7 +30,7 @@ public class ConsoleApp {
         try (Workbook workbook = isXSSF ? new XSSFWorkbook() : new HSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Sheet1");
 
-            DynamicExcelGenerator generator = new DynamicExcelGenerator(workbook, sheet);
+            DynamicExcelGeneratorLargeBoxes generator = new DynamicExcelGeneratorLargeBoxes(workbook, sheet);
             generator.generateCardsFromBlocks(dataBlocks);
 
             try (FileOutputStream fileOut = new FileOutputStream(fileName)) {

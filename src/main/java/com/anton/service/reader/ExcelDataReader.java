@@ -72,13 +72,13 @@ public class ExcelDataReader {
         item.setInvoiceItemNumber(getIntegerValue(row.getCell(0)));
 
         // Читаем B-F (индексы 1-5)
-        item.setName(getCellValue(row.getCell(1)));
+        item.setNameRus(getCellValue(row.getCell(1)));
         item.setSize(getCellValue(row.getCell(2)));
         item.setMarking(getCellValue(row.getCell(3)));
         item.setQuantityInBox(getCellValue(row.getCell(4)));
         item.setOrder(getCellValue(row.getCell(5)));
 
-        item.setNameAndSize(item.getName() + "\n" + item.getSize());
+        item.setNameAndSize(item.getNameRus() + "\n" + item.getSize());
 
         if (isEmptyItem(item)) {
             return null;
@@ -89,7 +89,7 @@ public class ExcelDataReader {
 
     private boolean isEmptyItem(LabelLargeBox item) {
         return (item.getInvoiceItemNumber() == null) &&
-                (item.getName() == null || item.getName().trim().isEmpty()) &&
+                (item.getNameRus() == null || item.getNameRus().trim().isEmpty()) &&
                 (item.getSize() == null || item.getSize().trim().isEmpty()) &&
                 (item.getQuantityInBox() == null || item.getQuantityInBox().trim().isEmpty()) &&
                 (item.getMarking() == null || item.getMarking().trim().isEmpty()) &&

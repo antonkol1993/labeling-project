@@ -8,7 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.IOException;
 import java.util.List;
 
-public class DynamicExcelGenerator {
+public class DynamicExcelGeneratorLargeBoxes {
 
     private final Workbook workbook;
     private final Sheet sheet;
@@ -16,7 +16,7 @@ public class DynamicExcelGenerator {
     private int startRow = 2;
     private int startCol = 2;
 
-    public DynamicExcelGenerator(Workbook workbook, Sheet sheet) {
+    public DynamicExcelGeneratorLargeBoxes(Workbook workbook, Sheet sheet) {
         this.workbook = workbook;
         this.sheet = sheet;
         this.isXSSF = workbook instanceof XSSFWorkbook;

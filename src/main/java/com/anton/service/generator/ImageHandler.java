@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 
 
-
 public class ImageHandler {
 
     public static void addImageToSheet(Workbook workbook, Sheet sheet, String imagePath,
@@ -54,45 +53,37 @@ public class ImageHandler {
             }
         }
 
-        // Рассчитываем коэффициенты масштабирования по ширине и высоте
-        double scaleX = cellWidthPx / originalWidth;
-        double scaleY = cellHeightPx / originalHeight;
+        // Рассчитываем коэффициент масштабирования, чтобы изображение не превышало 85% от размера ячейки
+        double scaleX = cellWidthPx * 0.85 / originalWidth;  // 85% от ширины ячейки
+        double scaleY = cellHeightPx * 0.85 / originalHeight;  // 85% от высоты ячейки
 
-        // Изначально предполагаем, что изображение будет уменьшено, если оно больше ячейки
-        double scale = 1.0;  // Масштаб по умолчанию
-
-        // Если изображение больше ячейки по хотя бы одному из параметров, то уменьшаем
-        if (originalWidth > cellWidthPx || originalHeight > cellHeightPx) {
-            // Выбираем наименьший масштаб, чтобы изображение не выходило за пределы ячейки
-            scale = Math.min(scaleX, scaleY);
-
-            // Уменьшаем изображение до 85% от размера ячейки, если оно слишком большое
-            scale = Math.min(scale, 0.85);  // 85% от размера ячейки
-        }
+        // Масштабируем по большей стороне изображения
+        double scale = Math.min(scaleX, scaleY);
 
         // Если изображение меньше ячейки, оставляем scale = 1
         if (originalWidth < cellWidthPx && originalHeight < cellHeightPx) {
             scale = 1.0;
         }
 
-        // Вычисляем новые размеры изображения с учетом масштаба
+// Вычисляем новые размеры изображения с учетом масштаба
         int newWidth = (int) (originalWidth * scale);
         int newHeight = (int) (originalHeight * scale);
 
-        // Вычисляем отступы по X и Y для центрирования
-        double offsetX = (cellWidthPx - newWidth) / 2;
-        double offsetY = (cellHeightPx - newHeight) / 2;
+// Вычисляем отступы по X и Y для центрирования
+        double offsetX = (cellWidthPx - newWidth) / 2.0;
+        double offsetY = (cellHeightPx - newHeight) / 2.0;
 
-        // Конвертируем отступы в единицы измерения Excel (EMU)
+// Конвертируем отступы в единицы измерения Excel (EMU)
         int dx1 = (int) (offsetX * 9525);
         int dy1 = (int) (offsetY * 9525);
 
-        // Создаем рисунок в Excel с учетом масштаба и отступов
+// Конвертируем в EMU для правильного позиционирования
         if (workbook instanceof XSSFWorkbook) {
             XSSFDrawing drawing = ((XSSFWorkbook) workbook).getSheetAt(0).createDrawingPatriarch();
             XSSFClientAnchor anchor = new XSSFClientAnchor(dx1, dy1, 0, 0, startCol, startRow, endCol + 1, endRow + 1);
             Picture picture = drawing.createPicture(anchor, pictureIdx);
             picture.resize(scale);  // Применяем масштаб
         }
+
     }
 }

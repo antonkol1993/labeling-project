@@ -88,8 +88,8 @@ public class LabelLargeBoxMapper {
         label.setImagePath(imageMapping.getOrDefault(mappedKey, "Нет изображения"));
         label.setInvoiceItemNumber(item.getElementNumber());
         label.setSize(item.getSize());
-        label.setMarking(item.getPartNo());
-        label.setQuantityInBox(item.getCtn());
+        label.setMarking(item.getFinish());
+        label.setQuantityInBox(String.valueOf(item.getBox()));
         label.setOrder(item.getProformaNo());
         label.setNameAndSize(label.getNameRus() + " " + label.getSize());
 

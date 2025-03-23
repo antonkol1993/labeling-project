@@ -1,7 +1,10 @@
 package com.anton.service.generator;
 
+import com.anton.labeling.objects.InvoiceItemData;
 import com.anton.labeling.objects.LabelLargeBox;
+import com.anton.service.mapper.LabelLargeBoxMapper;
 import com.anton.service.reader.ExcelDataReader;
+import com.anton.service.reader.ExcelInvoiceParser;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,9 +20,15 @@ public class GeneratorMain {
         DynamicExcelGeneratorLargeBoxes generator = new DynamicExcelGeneratorLargeBoxes(workbook, sheet);
 
         ExcelDataReader reader = new ExcelDataReader();
-        List<List<LabelLargeBox>> dataBlocks = reader.readExcel("excel-example/DataFromInvoice .xlsx");
+//        List<List<LabelLargeBox>> dataBlocks = reader.readExcel("excel-example/DataFromInvoice .xlsx");
+//
+//        generator.generateCardsFromBlocks(dataBlocks);
+        String filePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
+        List<List<InvoiceItemData>> parsedData = ExcelInvoiceParser.parseExcel(filePath);
 
-        generator.generateCardsFromBlocks(dataBlocks);
+        LabelLargeBoxMapper mapper = new LabelLargeBoxMapper();
+        List<List<LabelLargeBox>> mappedData = mapper.mapData(parsedData);
+        generator.generateCardsFromBlocks(mappedData);
 
         try (FileOutputStream fileOut = new FileOutputStream("output.xlsx")) {
             workbook.write(fileOut);

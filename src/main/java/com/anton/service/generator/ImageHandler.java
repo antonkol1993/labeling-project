@@ -10,6 +10,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
+
+
 public class ImageHandler {
 
     public static void addImageToSheet(Workbook workbook, Sheet sheet, String imagePath,
@@ -30,6 +32,7 @@ public class ImageHandler {
             throw new IllegalArgumentException("Поддерживаются только PNG и JPEG изображения.");
         }
 
+        // Добавляем изображение в Workbook
         int pictureIdx = workbook.addPicture(imageBytes, pictureType);
 
         // Загружаем изображение для получения его размеров
@@ -37,7 +40,7 @@ public class ImageHandler {
         int originalWidth = bufferedImage.getWidth();
         int originalHeight = bufferedImage.getHeight();
 
-        // Вычисляем размеры ячейки в пикселях
+        // Получаем размеры ячейки в пикселях
         float cellWidthPx = 0;
         for (int col = startCol; col <= endCol; col++) {
             cellWidthPx += sheet.getColumnWidthInPixels(col);
@@ -47,33 +50,49 @@ public class ImageHandler {
         for (int row = startRow; row <= endRow; row++) {
             Row sheetRow = sheet.getRow(row);
             if (sheetRow != null) {
-                cellHeightPx += sheetRow.getHeightInPoints() * 1.33f;
+                cellHeightPx += sheetRow.getHeightInPoints() * 1.33f;  // Преобразуем высоту в пиксели
             }
         }
 
-        // Масштабируем изображение так, чтобы оно полностью влезало
+        // Рассчитываем коэффициенты масштабирования по ширине и высоте
         double scaleX = cellWidthPx / originalWidth;
         double scaleY = cellHeightPx / originalHeight;
 
-        int imageWidth = (int) (originalWidth);
-        int imageHeight = (int) (originalHeight);
+        // Изначально предполагаем, что изображение будет уменьшено, если оно больше ячейки
+        double scale = 1.0;  // Масштаб по умолчанию
 
-        // Центрирование изображения в ячейке после масштабирования
-        double offsetX = (cellWidthPx - imageWidth) / 2;
-        double offsetY = (cellHeightPx - imageHeight) / 2;
+        // Если изображение больше ячейки по хотя бы одному из параметров, то уменьшаем
+        if (originalWidth > cellWidthPx || originalHeight > cellHeightPx) {
+            // Выбираем наименьший масштаб, чтобы изображение не выходило за пределы ячейки
+            scale = Math.min(scaleX, scaleY);
 
-        // Конвертация в EMU (Excel Measurement Units)
-        int dx1 = offsetX < 0 ? (int) (-offsetX * 9525) : (int) (offsetX * 9525);
-        int dy1 = offsetY < 0 ? (int) (-offsetY * 9525) : (int) (offsetY * 9525);
+            // Уменьшаем изображение до 85% от размера ячейки, если оно слишком большое
+            scale = Math.min(scale, 0.85);  // 85% от размера ячейки
+        }
 
-        // Создаём рисунок
+        // Если изображение меньше ячейки, оставляем scale = 1
+        if (originalWidth < cellWidthPx && originalHeight < cellHeightPx) {
+            scale = 1.0;
+        }
+
+        // Вычисляем новые размеры изображения с учетом масштаба
+        int newWidth = (int) (originalWidth * scale);
+        int newHeight = (int) (originalHeight * scale);
+
+        // Вычисляем отступы по X и Y для центрирования
+        double offsetX = (cellWidthPx - newWidth) / 2;
+        double offsetY = (cellHeightPx - newHeight) / 2;
+
+        // Конвертируем отступы в единицы измерения Excel (EMU)
+        int dx1 = (int) (offsetX * 9525);
+        int dy1 = (int) (offsetY * 9525);
+
+        // Создаем рисунок в Excel с учетом масштаба и отступов
         if (workbook instanceof XSSFWorkbook) {
             XSSFDrawing drawing = ((XSSFWorkbook) workbook).getSheetAt(0).createDrawingPatriarch();
             XSSFClientAnchor anchor = new XSSFClientAnchor(dx1, dy1, 0, 0, startCol, startRow, endCol + 1, endRow + 1);
             Picture picture = drawing.createPicture(anchor, pictureIdx);
-
-            // Устанавливаем масштабированное изображение
-            picture.resize();
+            picture.resize(scale);  // Применяем масштаб
         }
     }
 }

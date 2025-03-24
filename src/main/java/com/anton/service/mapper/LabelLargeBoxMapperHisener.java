@@ -14,12 +14,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-public class LabelLargeBoxMapper {
+public class LabelLargeBoxMapperHisener {
     public static void main(String[] args) throws IOException {
-        String filePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
+//        String filePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
+        String filePath = "25HS10038P-PI.xlsx";
+
         List<List<InvoiceItemData>> parsedData = ExcelInvoiceParser.parseExcel(filePath);
 
-        LabelLargeBoxMapper mapper = new LabelLargeBoxMapper();
+        LabelLargeBoxMapperHisener mapper = new LabelLargeBoxMapperHisener();
         List<List<LabelLargeBox>> mappedData = mapper.mapData(parsedData);
 
         // Выводим результат
@@ -44,7 +46,7 @@ public class LabelLargeBoxMapper {
     private final Map<String, String> rusMapping;
     private final Map<String, String> imageMapping;
 
-    public LabelLargeBoxMapper() throws IOException {
+    public LabelLargeBoxMapperHisener() throws IOException {
         this.invoiceMapping = loadProperties("mapping_item-invoice.properties");
         this.rusMapping = loadProperties("mapping_item-RUSvalue.properties");
         this.imageMapping = loadProperties("mapping_item-image.properties");
@@ -91,7 +93,7 @@ public class LabelLargeBoxMapper {
         label.setMarking(item.getFinish());
         label.setQuantityInBox(String.valueOf(item.getBox()));
         label.setOrder(item.getProformaNo());
-        label.setNameAndSize(label.getNameRus() + " " + label.getSize());
+        label.setNameAndSize(label.getNameRus() + "\n" + label.getSize());
 
         return label;
     }

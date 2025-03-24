@@ -55,7 +55,8 @@ public class ExcelInvoiceParser {
         String currentProformaNo = null;
 
         try (FileInputStream fis = new FileInputStream(filePath);
-             Workbook workbook = new XSSFWorkbook(fis)) {
+             Workbook workbook = WorkbookFactory.create(fis)) {  // Автоматически определяет формат (XLS/XLSX)
+
 
             FormulaEvaluator formulaEvaluator = workbook.getCreationHelper().createFormulaEvaluator(); // Создаем FormulaEvaluator для вычисления формул
             Sheet sheet = workbook.getSheetAt(0);
@@ -63,7 +64,11 @@ public class ExcelInvoiceParser {
             for (Row row : sheet) {
 
 // Проверяем строку 9 на наличие объединенных ячеек для proformaNo (столбцы N и O)
-                if (row.getRowNum() == 8) { // Строка 9 (индексация с 0)
+                boolean isXLS = filePath.toLowerCase().endsWith(".xls");
+
+                int proformaRowIndex = isXLS ? 7 : 8; // В .xls ищем на строке 8 (индекс 7), в .xlsx на строке 9 (индекс 8)
+
+                if (row.getRowNum() == proformaRowIndex) {
                     Cell proformaCell = row.getCell(13); // Столбец N (индексация с 0)
                     if (isMergedInRange(sheet, proformaCell, 13, 14)) {
                         currentProformaNo = getCellValue(proformaCell);

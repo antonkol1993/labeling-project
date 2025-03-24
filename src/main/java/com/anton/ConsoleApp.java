@@ -1,7 +1,7 @@
 package com.anton;
 
 import com.anton.service.generator.DynamicExcelGeneratorLargeBoxes;
-import com.anton.service.reader.ExcelDataReader;
+import com.anton.service.reader.ExcelPrepareFormDataReader;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -22,8 +22,8 @@ public class ConsoleApp {
         String fileName = choice == 1 ? "output.xlsx" : "output.xls";
         boolean isXSSF = choice == 1;
 
-        ExcelDataReader excelDataReader = new ExcelDataReader();
-        List<List<LabelLargeBox>> dataBlocks = excelDataReader.readExcel("excel-example/DataFromInvoice .xlsx");
+        ExcelPrepareFormDataReader excelPrepareFormDataReader = new ExcelPrepareFormDataReader();
+        List<List<LabelLargeBox>> dataBlocks = excelPrepareFormDataReader.readExcel("excel-example/DataFromInvoice .xlsx");
 
 
 

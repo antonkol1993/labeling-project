@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class ExcelDataReader {
+public class ExcelPrepareFormDataReader {
 
     private final List<List<LabelLargeBox>> dataBlocks = new ArrayList<>();
     private List<LabelLargeBox> currentBlock = new ArrayList<>();

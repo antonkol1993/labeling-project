@@ -18,6 +18,10 @@ public class ImageHandlerNew {
         byte[] imageBytes;
         try (InputStream inputStream = new FileInputStream(imagePath)) {
             imageBytes = IOUtils.toByteArray(inputStream);
+        } catch (IOException e) {
+            System.err.println("Image not found: " + imagePath);
+            e.printStackTrace();
+            throw e;
         }
 
         // Определяем тип изображения
@@ -77,7 +81,8 @@ public class ImageHandlerNew {
         // Добавляем изображение в Excel
         if (workbook instanceof XSSFWorkbook) {
             XSSFDrawing drawing = ((XSSFWorkbook) workbook).getSheetAt(0).createDrawingPatriarch();
-            XSSFClientAnchor anchor = new XSSFClientAnchor(dx1, dy1, 0, 0, startCol, startRow, endCol + 1, endRow + 1);
+            XSSFClientAnchor anchor = new XSSFClientAnchor(dx1, dy1, -dx1, -dy1, startCol, startRow, endCol + 1, endRow + 1);
+//            anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_DONT_RESIZE);
             Picture picture = drawing.createPicture(anchor, pictureIdx);
         }
     }

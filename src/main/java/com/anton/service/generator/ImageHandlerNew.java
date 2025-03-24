@@ -10,8 +10,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
-
-public class ImageHandler {
+public class ImageHandlerNew {
 
     public static void addImageToSheet(Workbook workbook, Sheet sheet, String imagePath,
                                        int startRow, int startCol, int endRow, int endCol) throws IOException {
@@ -53,37 +52,33 @@ public class ImageHandler {
             }
         }
 
-        // Рассчитываем коэффициент масштабирования, чтобы изображение не превышало 85% от размера ячейки
-        double scaleX = cellWidthPx * 0.85 / originalWidth;  // 85% от ширины ячейки
-        double scaleY = cellHeightPx * 0.85 / originalHeight;  // 85% от высоты ячейки
+        // --- МАСШТАБИРОВАНИЕ ---
+        double scale = 1.0;  // По умолчанию — не изменяем размер
 
-        // Масштабируем по большей стороне изображения
-        double scale = Math.min(scaleX, scaleY);
-
-        // Если изображение меньше ячейки, оставляем scale = 1
-        if (originalWidth < cellWidthPx && originalHeight < cellHeightPx) {
-            scale = 1.0;
+        // Если изображение больше ячейки, то уменьшаем его
+        if (originalWidth > cellWidthPx || originalHeight > cellHeightPx) {
+            double scaleX = (cellWidthPx * 0.80) / originalWidth;  // 80% от ширины ячейки
+            double scaleY = (cellHeightPx * 0.80) / originalHeight; // 80% от высоты ячейки
+            scale = Math.min(scaleX, scaleY);
         }
 
-// Вычисляем новые размеры изображения с учетом масштаба
+        // Если изображение меньше или равно ячейке, **оставляем его как есть**
         int newWidth = (int) (originalWidth * scale);
         int newHeight = (int) (originalHeight * scale);
 
-// Вычисляем отступы по X и Y для центрирования
+        // Вычисляем отступы для центрирования
         double offsetX = (cellWidthPx - newWidth) / 2.0;
         double offsetY = (cellHeightPx - newHeight) / 2.0;
 
-// Конвертируем отступы в единицы измерения Excel (EMU)
+        // Конвертируем отступы в EMU (единицы Excel)
         int dx1 = (int) (offsetX * 9525);
         int dy1 = (int) (offsetY * 9525);
 
-// Конвертируем в EMU для правильного позиционирования
+        // Добавляем изображение в Excel
         if (workbook instanceof XSSFWorkbook) {
             XSSFDrawing drawing = ((XSSFWorkbook) workbook).getSheetAt(0).createDrawingPatriarch();
             XSSFClientAnchor anchor = new XSSFClientAnchor(dx1, dy1, 0, 0, startCol, startRow, endCol + 1, endRow + 1);
             Picture picture = drawing.createPicture(anchor, pictureIdx);
-            picture.resize(scale);  // Применяем масштаб
         }
-
     }
 }

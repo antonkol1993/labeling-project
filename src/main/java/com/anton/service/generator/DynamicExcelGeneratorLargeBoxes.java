@@ -76,9 +76,9 @@ public class DynamicExcelGeneratorLargeBoxes {
         }
 
         // Добавление изображений
-        ImageHandler.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
+        ImageHandlerNew.addImageToSheet(workbook, sheet, "src/main/resources/static/images/Mfix.jpg",
                 startRow - 1, startCol, startRow - 1, startCol + 2);
-        ImageHandler.addImageToSheet(workbook, sheet, labelLargeBox.getImagePath(),
+        ImageHandlerNew.addImageToSheet(workbook, sheet, labelLargeBox.getImagePath(),
                 startRow , startCol, startRow , startCol + 2);
     }
 

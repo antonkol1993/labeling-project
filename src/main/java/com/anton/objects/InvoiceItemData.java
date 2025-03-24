@@ -1,4 +1,4 @@
-package com.anton.labeling.objects;
+package com.anton.objects;
 
 import lombok.Getter;
 import lombok.Setter;

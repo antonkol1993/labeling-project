@@ -1,7 +1,7 @@
-package com.anton.service.reader;
+package com.anton.service.hisener.reader;
 
 
-import com.anton.labeling.objects.LabelLargeBox;
+import com.anton.objects.LabelLargeBox;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.File;

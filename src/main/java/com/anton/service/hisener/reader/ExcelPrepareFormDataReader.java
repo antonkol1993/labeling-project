@@ -1,6 +1,7 @@
 package com.anton.service.hisener.reader;
 
 
+import com.anton.objects.DefaultItem;
 import com.anton.objects.LabelLargeBox;
 import org.apache.poi.ss.usermodel.*;
 
@@ -65,20 +66,19 @@ public class ExcelPrepareFormDataReader {
         System.out.println("\n-------------------------");
     }
 
-    private LabelLargeBox processDataBlock(Row row) {
-        LabelLargeBox item = new LabelLargeBox();
+    private DefaultItem processDataBlock(Row row) {
+        DefaultItem item = new DefaultItem();
 
-        // Читаем колонку A (индекс 0) - invoiceItemNumber
-        item.setInvoiceItemNumber(getIntegerValue(row.getCell(0)));
+        // Читаем A-F (индексы 0-5)
+        item.setItemNo(getIntegerValue(row.getCell(0)));                //A
+        item.setMainName(getCellValue(row.getCell(1)));                 //B
+        item.setAlterNameRus(getCellValue(row.getCell(2)));             //C
+        item.setSize(getCellValue(row.getCell(3)));                     //D
+        item.setMarking(getCellValue(row.getCell(4)));                  //E
+        item.setQuantityInBox(getCellValue(row.getCell(5)));            //F
+        item.setOrder(getCellValue(row.getCell(6)));                    //G
+        item.setAlterImagePath(getCellValue(row.getCell(7)));           //H
 
-        // Читаем B-F (индексы 1-5)
-        item.setNameRus(getCellValue(row.getCell(1)));
-        item.setSize(getCellValue(row.getCell(2)));
-        item.setMarking(getCellValue(row.getCell(3)));
-        item.setQuantityInBox(getCellValue(row.getCell(4)));
-        item.setOrder(getCellValue(row.getCell(5)));
-
-        item.setNameAndSize(item.getNameRus() + "\n" + item.getSize());
 
         if (isEmptyItem(item)) {
             return null;
@@ -87,12 +87,14 @@ public class ExcelPrepareFormDataReader {
         return item;
     }
 
-    private boolean isEmptyItem(LabelLargeBox item) {
-        return (item.getInvoiceItemNumber() == null) &&
-                (item.getNameRus() == null || item.getNameRus().trim().isEmpty()) &&
+    private boolean isEmptyItem(DefaultItem item) {
+        return (item.getItemNo() == null) &&
+                (item.getMainName() == null || item.getMainName().trim().isEmpty()) &&
+                (item.getAlterNameRus() == null || item.getAlterNameRus().trim().isEmpty()) &&
                 (item.getSize() == null || item.getSize().trim().isEmpty()) &&
                 (item.getQuantityInBox() == null || item.getQuantityInBox().trim().isEmpty()) &&
                 (item.getMarking() == null || item.getMarking().trim().isEmpty()) &&
+                (item.getAlterImagePath() == null || item.getAlterImagePath().trim().isEmpty()) &&
                 (item.getOrder() == null || item.getOrder().trim().isEmpty());
     }
 

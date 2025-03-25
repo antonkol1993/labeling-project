@@ -88,7 +88,7 @@ public class LabelLargeBoxMapperHisener {
         // Теперь ищем русское название по найденному ключу
         label.setNameRus(rusMapping.getOrDefault(mappedKey, "Неизвестно"));
         label.setImagePath(imageMapping.getOrDefault(mappedKey, "Нет изображения"));
-        label.setInvoiceItemNumber(item.getElementNumber());
+        label.setItemNo(item.getElementNumber());
         label.setSize(item.getSize());
         label.setMarking(item.getFinish());
         label.setQuantityInBox(String.valueOf(item.getBox()));

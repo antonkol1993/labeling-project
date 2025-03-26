@@ -1,10 +1,10 @@
 package com.anton.service.generator;
 
 import com.anton.objects.InvoiceItemData;
-import com.anton.objects.LabelLargeBox;
+import com.anton.for_default.obj.LabelLargeBox;
 import com.anton.service.hisener.mapper.LabelLargeBoxMapperHisener;
 import com.anton.service.hisener.reader.ExcelInvoiceParser;
-import com.anton.service.hisener.reader.DefaultReader;
+import com.anton.for_default.reader.DefaultReader;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

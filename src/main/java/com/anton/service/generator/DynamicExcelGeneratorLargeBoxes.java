@@ -1,6 +1,6 @@
 package com.anton.service.generator;
 
-import com.anton.objects.LabelLargeBox;
+import com.anton.for_default.obj.LabelLargeBox;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;

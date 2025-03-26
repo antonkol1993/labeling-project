@@ -1,4 +1,4 @@
-package com.anton.objects;
+package com.anton.for_default.obj;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,7 @@
 package com.anton.service.hisener.mapper;
 
 import com.anton.objects.InvoiceItemData;
-import com.anton.objects.LabelLargeBox;
+import com.anton.for_default.obj.LabelLargeBox;
 import com.anton.service.hisener.reader.ExcelInvoiceParser;
 
 import java.io.IOException;

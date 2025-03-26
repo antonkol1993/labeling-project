@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public class LabelLargeBoxMapperHisener {
     public static void main(String[] args) throws IOException {
-//        String filePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
-        String filePath = "25HS10038P-PI.xlsx";
+        String filePath = "excel-example/China14 invoices/25HS10047P-PI  Final 3.13.xlsx";
+//        String filePath = "25HS10038P-PI.xlsx";
 
         List<List<InvoiceItemData>> parsedData = ExcelInvoiceParser.parseExcel(filePath);
 

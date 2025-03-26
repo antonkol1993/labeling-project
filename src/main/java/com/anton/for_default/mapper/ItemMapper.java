@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -44,6 +47,7 @@ public class ItemMapper {
             logger.error("Ошибка при обработке файла: {}", e.getMessage());
         }
     }
+
     private final Properties mappingToImage = new Properties();
     private final Properties mappingToValueRUS = new Properties();
     private final Properties mappingToImages = new Properties();
@@ -55,16 +59,20 @@ public class ItemMapper {
     }
 
     private void loadProperties(Properties properties, String fileName) {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream(fileName)) {
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream(fileName);
+             InputStreamReader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+
             if (input == null) {
                 System.err.println("Файл " + fileName + " не найден");
                 return;
             }
-            properties.load(input);
+
+            properties.load(reader);
         } catch (IOException e) {
             System.err.println("Ошибка загрузки файла " + fileName + ": " + e.getMessage());
         }
     }
+
 
     public List<List<LabelLargeBox>> map(List<List<DefaultItem>> dataBlocks) {
         List<List<LabelLargeBox>> mappedBlocks = new ArrayList<>();
@@ -116,6 +124,7 @@ public class ItemMapper {
 
         return labelBox;
     }
+
     private String findKeyByValue(Properties properties, String valueToFind) {
         for (String key : properties.stringPropertyNames()) {
             if (properties.getProperty(key).trim().equals(valueToFind)) {
@@ -124,9 +133,6 @@ public class ItemMapper {
         }
         return null; // Если не нашли, возвращаем null
     }
-
-
-
 
 
 }

@@ -3,8 +3,8 @@ package com.anton.service.generator;
 import com.anton.objects.InvoiceItemData;
 import com.anton.objects.LabelLargeBox;
 import com.anton.service.hisener.mapper.LabelLargeBoxMapperHisener;
-import com.anton.service.hisener.reader.ExcelPrepareFormDataReader;
 import com.anton.service.hisener.reader.ExcelInvoiceParser;
+import com.anton.service.hisener.reader.DefaultReader;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -19,7 +19,7 @@ public class GeneratorMain {
         Sheet sheet = workbook.createSheet("Карточки");
         DynamicExcelGeneratorLargeBoxes generator = new DynamicExcelGeneratorLargeBoxes(workbook, sheet);
 
-        ExcelPrepareFormDataReader reader = new ExcelPrepareFormDataReader();
+        DefaultReader reader = new DefaultReader();
 //        List<List<LabelLargeBox>> dataBlocks = reader.readExcel("excel-example/DataFromInvoice .xlsx");
 //
 //        generator.generateCardsFromBlocks(dataBlocks);

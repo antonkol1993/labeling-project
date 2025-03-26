@@ -2,7 +2,6 @@ package com.anton.service.hisener.reader;
 
 
 import com.anton.objects.DefaultItem;
-import com.anton.objects.LabelLargeBox;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.File;
@@ -10,31 +9,50 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-public class ExcelPrepareFormDataReader {
+public class DefaultReader {
 
-    private final List<List<LabelLargeBox>> dataBlocks = new ArrayList<>();
-    private List<LabelLargeBox> currentBlock = new ArrayList<>();
+    public static void main(String[] args) {
+        String filePath = "excel-example/DataFromInvoice for example .xlsx"; // Укажите путь к файлу
 
-    public List<List<LabelLargeBox>> readExcel(String filePath) throws IOException {
+        DefaultReader reader = new DefaultReader();
+        try {
+            List<List<DefaultItem>> dataBlocks = reader.readExcel(filePath);
+
+            for (int i = 0; i < dataBlocks.size(); i++) {
+                System.out.println("Блок данных #" + (i + 1));
+                for (DefaultItem item : dataBlocks.get(i)) {
+                    System.out.println(item.toString());
+                }
+                System.out.println("----------------------");
+            }
+
+        } catch (IOException e) {
+            System.err.println("Ошибка при чтении файла: " + e.getMessage());
+        }
+
+    }
+
+    private final List<List<DefaultItem>> dataBlocks = new ArrayList<>();
+    private List<DefaultItem> currentBlock = new ArrayList<>();
+
+    public List<List<DefaultItem>> readExcel(String filePath) throws IOException {
         FileInputStream file = new FileInputStream(new File(filePath));
         Workbook workbook = WorkbookFactory.create(file);
         Sheet sheet = workbook.getSheetAt(0);
 
-        boolean headersProcessed = false;
+//        boolean headersProcessed = false;
 
         for (Row row : sheet) {
+            System.out.println("Читаем строку #" + (row.getRowNum() + 1));  // +1 для реального номера строки
             if (row.getRowNum() < 2) continue; // Пропускаем заголовки (читаем с 3 строки)
 
-            if (!headersProcessed) {
-                processHeaders(row);
-                headersProcessed = true;
-                continue;
-            }
+
 
             // Обрабатываем строку
-            LabelLargeBox item = processDataBlock(row);
+            DefaultItem item = processDataBlock(row);
 
             if (item != null) {
+                System.out.println("Обработан элемент: " + item); // Логируем обработанный элемент
                 currentBlock.add(item);
             } else {
                 if (!currentBlock.isEmpty()) {
@@ -54,24 +72,14 @@ public class ExcelPrepareFormDataReader {
         return dataBlocks;
     }
 
-    public List<List<LabelLargeBox>> getDataBlocks() {
-        return dataBlocks;
-    }
 
-    private void processHeaders(Row row) {
-        System.out.println("Заголовки: ");
-        for (Cell cell : row) {
-            System.out.print(cell.getCellType() + " | ");
-        }
-        System.out.println("\n-------------------------");
-    }
 
     private DefaultItem processDataBlock(Row row) {
         DefaultItem item = new DefaultItem();
 
         // Читаем A-F (индексы 0-5)
         item.setItemNo(getIntegerValue(row.getCell(0)));                //A
-        item.setMainName(getCellValue(row.getCell(1)));                 //B
+        item.setOriginalName(getCellValue(row.getCell(1)));                 //B
         item.setAlterNameRus(getCellValue(row.getCell(2)));             //C
         item.setSize(getCellValue(row.getCell(3)));                     //D
         item.setMarking(getCellValue(row.getCell(4)));                  //E
@@ -79,8 +87,19 @@ public class ExcelPrepareFormDataReader {
         item.setOrder(getCellValue(row.getCell(6)));                    //G
         item.setAlterImagePath(getCellValue(row.getCell(7)));           //H
 
+        // Логируем значения для каждой ячейки
+        System.out.println("Читаем строку -> " +
+                "ItemNo: " + item.getItemNo() + ", " +
+                "OriginalName: " + item.getOriginalName() + ", " +
+                "AlterNameRus: " + item.getAlterNameRus() + ", " +
+                "Size: " + item.getSize() + ", " +
+                "Marking: " + item.getMarking() + ", " +
+                "QuantityInBox: " + item.getQuantityInBox() + ", " +
+                "Order: " + item.getOrder() + ", " +
+                "AlterImagePath: " + item.getAlterImagePath());
 
         if (isEmptyItem(item)) {
+            System.out.println("Элемент пустой, пропускаем");
             return null;
         }
 
@@ -89,7 +108,7 @@ public class ExcelPrepareFormDataReader {
 
     private boolean isEmptyItem(DefaultItem item) {
         return (item.getItemNo() == null) &&
-                (item.getMainName() == null || item.getMainName().trim().isEmpty()) &&
+                (item.getOriginalName() == null || item.getOriginalName().trim().isEmpty()) &&
                 (item.getAlterNameRus() == null || item.getAlterNameRus().trim().isEmpty()) &&
                 (item.getSize() == null || item.getSize().trim().isEmpty()) &&
                 (item.getQuantityInBox() == null || item.getQuantityInBox().trim().isEmpty()) &&

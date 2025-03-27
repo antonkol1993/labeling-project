@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class DefaultItem {
     private Integer itemNo;
-    private String imagePath;
     private String alterImagePath;
 
     private String originalName;
@@ -23,7 +22,6 @@ public class DefaultItem {
     public String toString() {
         return  '{' +
                 "\"itemNo\"=" + "\"" + itemNo + "\"" + " | " +
-                "\"imagePath\"=" + "\"" + imagePath + "\"" + " | " +
                 "\"alterImagePath\"=" + "\"" + alterImagePath + "\"" + " | " +
                 "\"originalName\"=" + "\"" + originalName + "\"" + " | " +
                 "\"alterNameRus\"=" + "\"" + alterNameRus + "\"" + " | " +

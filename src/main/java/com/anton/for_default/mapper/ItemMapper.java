@@ -98,8 +98,8 @@ public class ItemMapper {
         // 📌 Очищаем originalName от лишних пробелов
         String originalName = item.getOriginalName();
         if (originalName == null || originalName.trim().isEmpty()) {
-            System.err.println("⚠ Ошибка: originalName == null или пустой!");
-            return labelBox;
+
+            System.err.println("⚠ Ошибка: originalName == null или пустой!" + "No " + '[' + item.getItemNo() + ']');
         }
         originalName = originalName.trim();
 
@@ -107,21 +107,22 @@ public class ItemMapper {
         String mappedKey = findKeyByValue(mappingToImage, originalName);
         if (mappedKey == null) {
             System.err.println("❌ Значение [" + originalName + "] не найдено в mapping_item-invoice.properties!");
+            labelBox.setNameRus(item.getAlterNameRus());
+            labelBox.setImagePath(item.getAlterImagePath());
+            return labelBox;
+        } else {
+            System.out.println("✅ Найден ключ: " + mappedKey);
+            labelBox.setKeyName(mappedKey);
+            // 🔍 **Шаг 2: Находим перевод в mapping_item-RUSvalue.properties**
+            String nameRus = mappingToValueRUS.getProperty(mappedKey, "");
+            labelBox.setNameRus(nameRus);
+
+            // 🔍 **Шаг 3: Находим путь к изображению в mapping_item-image.properties**
+            String imagePath = mappingToImages.getProperty(mappedKey, "");
+            labelBox.setImagePath(imagePath);
             return labelBox;
         }
 
-        System.out.println("✅ Найден ключ: " + mappedKey);
-        labelBox.setKeyName(mappedKey);
-
-        // 🔍 **Шаг 2: Находим перевод в mapping_item-RUSvalue.properties**
-        String nameRus = mappingToValueRUS.getProperty(mappedKey, "");
-        labelBox.setNameRus(nameRus);
-
-        // 🔍 **Шаг 3: Находим путь к изображению в mapping_item-image.properties**
-        String imagePath = mappingToImages.getProperty(mappedKey, "");
-        labelBox.setImagePath(imagePath);
-
-        return labelBox;
     }
 
     private String findKeyByValue(Properties properties, String valueToFind) {

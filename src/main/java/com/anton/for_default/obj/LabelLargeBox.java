@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class LabelLargeBox {
     private String keyName;
-    private Integer ItemNo;
+    private Integer itemNo;
     private String imagePath;
     private String nameRus;
     private String size;
@@ -15,4 +15,17 @@ public class LabelLargeBox {
     private String quantityInBox;
     private String order;
     private String nameAndSize;
+
+    @Override
+    public String toString() {
+        return keyName + " | " +
+                itemNo + " | " +
+                imagePath + " | " +
+                nameRus + " | " +
+                size + " | " +
+                marking + " | " +
+                quantityInBox + " | " +
+                order + " | " +
+                nameAndSize;
+    }
 }
